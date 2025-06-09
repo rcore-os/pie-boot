@@ -1,0 +1,18 @@
+[workspace]
+members = [
+    "pie-boot",
+    "tests/test-some-rt",
+]
+resolver = "3"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+authors = ["周睿 <zrufo747@outlook.com>"]
+categories = ["embedded", "no-std"]
+description = "PIE boot for os"
+keywords = ["os"]
+license = "MIT"
+repository = "https://github.com/rcore-os/somehal"
+
+
