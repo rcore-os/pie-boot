@@ -11,3 +11,7 @@ repository.workspace = true
 
 [features]
 vm = []
+
+
+[dependencies]
+pie-boot-macros = { path = "macros/pie-boot-macros" }
