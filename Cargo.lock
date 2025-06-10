@@ -65,6 +65,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "kdef-pgtable"
+version = "0.1.0"
+dependencies = [
+ "bitflags",
+ "prettyplease",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "log"
 version = "0.4.27"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -81,6 +91,7 @@ name = "pie-boot"
 version = "0.1.0"
 dependencies = [
  "kasm-aarch64",
+ "kdef-pgtable",
  "pie-boot-macros",
 ]
 
@@ -90,6 +101,16 @@ version = "0.1.0"
 dependencies = [
  "proc-macro2",
  "quote",
+ "syn",
+]
+
+[[package]]
+name = "prettyplease"
+version = "0.2.33"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9dee91521343f4c5c6a63edd65e54f31f5c92fe8978c40a4282f8372194c6a7d"
+dependencies = [
+ "proc-macro2",
  "syn",
 ]
 

@@ -1,5 +1,5 @@
 [package]
-name = "pie-boot"
+name = "kdef-pgtable"
 version.workspace = true
 edition.workspace = true
 authors.workspace = true
@@ -10,16 +10,15 @@ license.workspace = true
 repository.workspace = true
 
 [features]
-hv = []
+pg-sz16k = []
 
+pg-l3 = []
 
 [dependencies]
-pie-boot-macros = { path = "macros/pie-boot-macros" }
-kdef-pgtable  = { path = "../kdef-pgtable" }
-
-[target.'cfg(target_arch = "aarch64")'.dependencies]
-kasm-aarch64 = {path = "macros/kasm-aarch64"}
+bitflags = "2.9"
 
 
 [build-dependencies]
-kdef-pgtable  = { path = "../kdef-pgtable" }
+prettyplease = "0.2"
+quote = "1.0"
+syn = "2.0"

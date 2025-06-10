@@ -67,7 +67,12 @@ global_asm!(
 fn primary_entry() -> ! {
     naked_asm!(
         "
-        bl  {preserve_boot_args}
+    bl  {preserve_boot_args}
+	adrp	x1, early_init_stack
+	mov	sp, x1
+	mov	x29, xzr
+	adrp	x0, init_idmap_pg_dir
+	mov	x1, xzr
         ",
         preserve_boot_args = sym preserve_boot_args,
     )
