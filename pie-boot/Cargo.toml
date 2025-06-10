@@ -10,8 +10,12 @@ license.workspace = true
 repository.workspace = true
 
 [features]
-vm = []
+hv = []
 
 
 [dependencies]
 pie-boot-macros = { path = "macros/pie-boot-macros" }
+
+
+[target.'cfg(target_arch = "aarch64")'.dependencies]
+kasm-aarch64 = {path = "macros/kasm-aarch64"}

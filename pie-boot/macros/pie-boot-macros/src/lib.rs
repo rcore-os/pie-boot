@@ -3,7 +3,7 @@ use quote::quote;
 use syn::{ItemFn, parse_macro_input};
 
 #[proc_macro_attribute]
-pub fn idmap(_args: TokenStream, input: TokenStream) -> TokenStream {
+pub fn start_code(_args: TokenStream, input: TokenStream) -> TokenStream {
     let f = parse_macro_input!(input as ItemFn);
     let attrs = f.attrs;
     let vis = f.vis;
@@ -12,7 +12,6 @@ pub fn idmap(_args: TokenStream, input: TokenStream) -> TokenStream {
     let stmts = f.block.stmts;
 
     quote!(
-        #[unsafe(no_mangle)]
         #[unsafe(naked)]
         #[unsafe(link_section = ".idmap.text")]
         #(#attrs)*

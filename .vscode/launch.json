@@ -20,7 +20,7 @@
             ],
             "preLaunchTask": "qemu debug aarch64 rt",
             "preRunCommands": [
-                "target modules load --file ${workspaceFolder}/target/kernel.elf .boot.text 0x40200000"
+                "target modules load --file ${workspaceFolder}/target/kernel.elf .head.text 0x40200000"
             ]
         },
         {
