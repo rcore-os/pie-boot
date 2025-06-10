@@ -1,6 +1,6 @@
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::{Ident, ItemFn, parse::Parse, parse_macro_input, token::Unsafe};
+use syn::{Ident, ItemFn, parse::Parse, parse_macro_input};
 
 #[proc_macro_attribute]
 pub fn start_code(args: TokenStream, input: TokenStream) -> TokenStream {

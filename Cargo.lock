@@ -177,6 +177,7 @@ version = "0.1.0"
 dependencies = [
  "kasm-aarch64",
  "kdef-pgtable",
+ "pie-boot-arm-loader",
  "pie-boot-if",
  "pie-boot-macros",
 ]

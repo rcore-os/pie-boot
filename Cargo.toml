@@ -22,3 +22,4 @@ repository = "https://github.com/rcore-os/somehal"
 [workspace.dependencies]
 pie-boot-if = { path = "pie-boot-if", version = "0.1" }
 pie-boot-loader-macros = { path = "loader/pie-boot-loader-macros", version = "0.1" }
+
