@@ -190,6 +190,7 @@ dependencies = [
  "any-uart",
  "bitflags",
  "fdt-parser",
+ "kdef-pgtable",
  "log",
  "num-align",
  "page-table-generic",

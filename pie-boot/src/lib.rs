@@ -4,6 +4,8 @@
 #[path = "arch/aarch64/mod.rs"]
 mod arch;
 
+mod loader;
+
 use pie_boot_if::BootArgs;
 use pie_boot_macros::start_code;
 

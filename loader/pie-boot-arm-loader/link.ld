@@ -1,11 +1,11 @@
 ENTRY(_start)
 
-__page_size = 0x1000;
+__page_size = {PAGE_SIZE};
 
 SECTIONS
 {
-    /* . = 0xF00000000000; */
-    . = 0x40200040;
+    /* . = 0xF40202000; */
+    . = 0x40203000;
     .text : ALIGN(__page_size) {
         *(.text.init)
         *(.text .text.*)
@@ -30,6 +30,8 @@ SECTIONS
         *(COMMON)
         . = ALIGN(__page_size);
         __stop_boot_bss = .;
+        . += __page_size;
+        __stack_top = .;
     } 
 
 	/DISCARD/ : {

@@ -1,3 +1,4 @@
+use kdef_pgtable::PAGE_SIZE;
 use std::{io::Write, path::PathBuf};
 
 fn main() {
@@ -18,7 +19,8 @@ fn main() {
     println!("cargo:rerun-if-changed=link.ld");
     println!("cargo:rustc-link-search={}", out_dir().display());
 
-    let content = include_str!("link.ld");
+    let mut content = include_str!("link.ld").to_string();
+    content = content.replace("{PAGE_SIZE}", &format!("{PAGE_SIZE:#x}"));
     let mut file = std::fs::File::create(out_dir().join(ld_file)).expect("ld create failed");
     file.write_all(content.as_bytes()).expect("ld write failed");
 

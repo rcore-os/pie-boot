@@ -3,21 +3,7 @@ use core::arch::asm;
 use crate::paging::{PTEGeneric, PhysAddr, TableGeneric, VirtAddr};
 use aarch64_cpu::{asm::*, registers::*};
 
-pub fn switch_to_elx(a: *mut u8, b: *mut u8, c: *mut u8, d: *mut u8, e: *mut u8) {
-    unsafe {
-        asm!(
-            "mov x19, {0}",
-            "mov x20, {1}",
-            "mov x21, {2}",
-            "mov x22, {3}",
-            "mov x23, {4}",
-            in(reg) a,
-            in(reg) b,
-            in(reg) c,
-            in(reg) d,
-            in(reg) e,
-        );
-    }
+pub fn switch_to_elx(bootargs: usize) {
     SPSel.write(SPSel::SP::ELx);
     SP_EL0.set(0);
     let current_el = CurrentEL.read(CurrentEL::EL);
@@ -39,15 +25,14 @@ pub fn switch_to_elx(a: *mut u8, b: *mut u8, c: *mut u8, d: *mut u8, e: *mut u8)
             ELR_EL3.set(crate::_start as usize as _);
             unsafe {
                 asm!(
-                    "mov x0, x19",
-                    "mov x1, x20",
-                    "mov x2, x21",
-                    "mov x3, x22",
-                    "mov x4, x23",
-                    options(nostack)
+                    "
+                    mov x0, {}
+                    eret
+                    ",
+                    in(reg) bootargs,
+                    options(nostack, noreturn),
                 );
             }
-            eret();
         }
         // Disable EL1 timer traps and the timer offset.
         CNTHCTL_EL2.modify(CNTHCTL_EL2::EL1PCEN::SET + CNTHCTL_EL2::EL1PCTEN::SET);
@@ -68,15 +53,10 @@ pub fn switch_to_elx(a: *mut u8, b: *mut u8, c: *mut u8, d: *mut u8, e: *mut u8)
 
             asm!(
                 "
-            mov     x8, sp
-            msr     sp_el1, x8
-            mov x0, x19
-            mov x1, x20
-            mov x2, x21    
-            mov x3, x22
-            mov x4, x23
+            mov x0, {}
             eret
             ",
+                in(reg) bootargs,
                 options(nostack, noreturn),
             )
         };
