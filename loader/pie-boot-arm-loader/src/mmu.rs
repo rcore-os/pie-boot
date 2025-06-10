@@ -1,0 +1,140 @@
+use crate::paging::{Access, GB, MapConfig, PageTableRef, PhysAddr, TableGeneric};
+use num_align::{NumAlign, NumAssertAlign};
+
+use crate::*;
+
+pub struct LineAllocator {
+    pub start: *mut u8,
+    iter: *mut u8,
+    pub end: *mut u8,
+}
+
+impl LineAllocator {
+    pub fn new(start: *mut u8, size: usize) -> Self {
+        Self {
+            start,
+            iter: start,
+            end: unsafe { start.add(size) },
+        }
+    }
+
+    pub fn alloc(&mut self, layout: core::alloc::Layout) -> Option<usize> {
+        let start = self.iter.align_up(layout.align());
+        if start as usize + layout.size() > self.end as usize {
+            return None;
+        }
+        self.iter = unsafe { start.add(layout.size()) };
+
+        Some(start as usize)
+    }
+
+    fn highest_address(&self) -> usize {
+        self.iter as _
+    }
+
+    fn used(&self) -> usize {
+        self.highest_address() - self.start as usize
+    }
+}
+
+pub fn enable_mmu(kcode_offset: usize, kernal_kcode_start: usize, code_end_phys: usize) {
+    setup_table_regs();
+    println!("setup table regs ok");
+
+    let addr = new_boot_table(kcode_offset, kernal_kcode_start, code_end_phys);
+    set_table(addr);
+
+    setup_sctlr();
+}
+
+impl Access for LineAllocator {
+    #[inline(always)]
+    unsafe fn alloc(&mut self, layout: core::alloc::Layout) -> Option<PhysAddr> {
+        LineAllocator::alloc(self, layout).map(|p| p.into())
+    }
+
+    #[inline(always)]
+    unsafe fn dealloc(&mut self, _ptr: PhysAddr, _layout: core::alloc::Layout) {}
+
+    #[inline(always)]
+    fn phys_to_mut(&self, phys: PhysAddr) -> *mut u8 {
+        phys.raw() as _
+    }
+}
+
+/// `rsv_space` 在 `boot stack` 之后保留的空间到校
+pub fn new_boot_table(
+    kcode_offset: usize,
+    kernal_kcode_start: usize,
+    code_end_phys: usize,
+) -> PhysAddr {
+    let start = code_end_phys.align_up(Table::PAGE_SIZE) as *mut u8;
+    let size = MB;
+
+    let mut alloc = LineAllocator::new(start, size);
+
+    let access = &mut alloc;
+
+    println!("BootTable space: [{}, {})", access.start, {
+        access.start as usize + size
+    });
+
+    let mut table = early_err!(PageTableRef::<'_, Table>::create_empty(access));
+    unsafe {
+        let align = if kcode_offset.is_aligned_to(GB) {
+            GB
+        } else {
+            2 * MB
+        };
+
+        let code_start_phys = kernal_kcode_start.align_down(align);
+
+        let code_start = code_start_phys + kcode_offset;
+        let code_end: usize = (code_end_phys + kcode_offset).align_up(align);
+
+        let size = (code_end - code_start).max(align);
+
+        println!(
+            "code           : [{}, {}) -> [{}, {})",
+            code_start,
+            code_start + size,
+            code_start_phys,
+            code_start_phys + size
+        );
+
+        early_err!(table.map(
+            MapConfig {
+                vaddr: code_start.into(),
+                paddr: code_start_phys.into(),
+                size,
+                pte: Pte::new(),
+                allow_huge: true,
+                flush: false,
+            },
+            access,
+        ));
+
+        let size = if table.entry_size() == table.max_block_size() {
+            table.entry_size() * (Table::TABLE_LEN / 2)
+        } else {
+            table.max_block_size() * Table::TABLE_LEN
+        };
+        let start = 0x0usize;
+
+        println!("eq             : [{}, {})", start, start + size);
+        early_err!(table.map(
+            MapConfig {
+                vaddr: start.into(),
+                paddr: start.into(),
+                size,
+                pte: Pte::new(),
+                allow_huge: true,
+                flush: false,
+            },
+            access,
+        ));
+    }
+
+    println!("Table size     : {}", access.used());
+    table.paddr()
+}

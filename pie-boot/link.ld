@@ -12,6 +12,11 @@ SECTIONS{
     }
 }
 
+SECTIONS{ 
+    .boot_loader  : {
+        KEEP(*(.boot_loader))
+    }
+} INSERT BEFORE .data
 
 SECTIONS{
     .init_idmap_pg_dir  : ALIGN(PAGE_SIZE){

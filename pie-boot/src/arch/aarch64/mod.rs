@@ -1,28 +1,15 @@
-use core::arch::{global_asm, naked_asm};
+use core::arch::naked_asm;
+
+def_adr_l!();
 
 mod cache;
 
 use crate::start_code;
-use kasm_aarch64 as kasm;
+use kasm_aarch64::{self as kasm, def_adr_l};
 
 const FLAG_LE: usize = 0b0;
 const FLAG_PAGE_SIZE_4K: usize = 0b10;
 const FLAG_ANY_MEM: usize = 0b1000;
-
-#[repr(C, align(64))]
-pub struct BootArgs {
-    pub fdt: u64,
-    pub rsv1: u64,
-    pub rsv2: u64,
-    pub rsv3: u64,
-}
-
-pub static mut BOOT_ARGS: BootArgs = BootArgs {
-    fdt: 0,
-    rsv1: 0,
-    rsv2: 0,
-    rsv3: 0,
-};
 
 #[unsafe(naked)]
 #[unsafe(no_mangle)]
@@ -54,31 +41,24 @@ pub unsafe extern "C" fn _start() -> ! {
     )
 }
 
-global_asm!(
-    r"
-	.macro	adr_l, dst, sym
-	adrp	\dst, \sym
-	add	\dst, \dst, :lo12:\sym
-	.endm
-"
-);
-
-#[start_code]
+#[start_code(naked)]
 fn primary_entry() -> ! {
     naked_asm!(
         "
     bl  {preserve_boot_args}
-	adrp	x1, early_init_stack
+	adrp	x1, __early_stack_top
 	mov	sp, x1
 	mov	x29, xzr
 	adrp	x0, init_idmap_pg_dir
 	mov	x1, xzr
+    bl   {create_idmap}
         ",
         preserve_boot_args = sym preserve_boot_args,
+        create_idmap = sym create_init_idmap,
     )
 }
 
-#[start_code]
+#[start_code(naked)]
 fn preserve_boot_args() -> ! {
     naked_asm!(
         "
@@ -94,7 +74,12 @@ fn preserve_boot_args() -> ! {
 	add	x1, x0, #0x20			// 4 x 8 bytes
 	b	{dcache_inval_poc}		// tail call
         ",
-    boot_args = sym BOOT_ARGS,
+    boot_args = sym crate::BOOT_ARGS,
     dcache_inval_poc = sym cache::__dcache_inval_poc,
     )
+}
+
+#[start_code]
+fn create_init_idmap() {
+    let a = 1;
 }

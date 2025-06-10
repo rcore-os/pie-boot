@@ -9,10 +9,11 @@ pub const SZ_2M: usize = 2 * SZ_1M;
 pub const SZ_8M: usize = 8 * SZ_1M;
 pub const SZ_16M: usize = 16 * SZ_1M;
 
+pub const PAGE_SIZE: usize = 1usize << PAGE_SHIFT;
+
 const MODULES_VADDR: usize = _page_end(PG_VA_BITS);
 const MODULES_VSIZE: usize = (1usize << PG_VA_BITS) / 0x10 * 0x8;
 
-// KIMAGE_VADDR
 pub const KIMAGE_VADDR: usize = MODULES_VADDR + MODULES_VSIZE;
 
 const fn _page_offset(va: usize) -> usize {
@@ -23,7 +24,7 @@ const fn _page_end(va: usize) -> usize {
     !((1usize << va) - 1)
 }
 
-const fn span_nr_entries(vstart: usize, vend: usize, shift: usize) -> usize {
+fn span_nr_entries(vstart: usize, vend: usize, shift: usize) -> usize {
     ((vend - 1) >> shift) - (vstart >> shift) + 1
 }
 

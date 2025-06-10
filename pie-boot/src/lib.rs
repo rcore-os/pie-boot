@@ -4,4 +4,7 @@
 #[path = "arch/aarch64/mod.rs"]
 mod arch;
 
+use pie_boot_if::BootArgs;
 use pie_boot_macros::start_code;
+
+static mut BOOT_ARGS: BootArgs = BootArgs::new();

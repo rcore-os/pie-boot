@@ -14,12 +14,13 @@ hv = []
 
 
 [dependencies]
+pie-boot-if = { workspace = true }
 pie-boot-macros = { path = "macros/pie-boot-macros" }
-kdef-pgtable  = { path = "../kdef-pgtable" }
+kdef-pgtable = { path = "../kdef-pgtable" }
 
 [target.'cfg(target_arch = "aarch64")'.dependencies]
-kasm-aarch64 = {path = "macros/kasm-aarch64"}
+kasm-aarch64 = { path = "macros/kasm-aarch64" }
 
 
 [build-dependencies]
-kdef-pgtable  = { path = "../kdef-pgtable" }
+kdef-pgtable = { path = "../kdef-pgtable" }

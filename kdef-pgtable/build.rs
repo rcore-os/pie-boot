@@ -7,7 +7,7 @@ fn main() {
     let mut va_bits = 48usize;
     let mut pg_va_bits = 48usize;
     let mut page_levels = 4usize;
-    let mut page_size = 0x1000usize;
+    let mut page_shift = 12usize;
 
     let target = std::env::var("TARGET").unwrap();
 
@@ -16,7 +16,7 @@ fn main() {
     }
 
     if std::env::var("CARGO_FEATURE_PG_SZ16K").is_ok() {
-        page_size = 0x4000;
+        page_shift = 14;
         if target.contains("aarch64-") {
             pg_va_bits = 47;
         }
@@ -32,7 +32,7 @@ fn main() {
         pub const VA_BITS: usize = #va_bits;
         pub const PG_VA_BITS: usize = #pg_va_bits;
         pub const PAGE_LEVELS: usize = #page_levels;
-        pub const PAGE_SIZE: usize = #page_size;
+        pub const PAGE_SHIFT: usize = #page_shift;
     };
 
     let mut file =
