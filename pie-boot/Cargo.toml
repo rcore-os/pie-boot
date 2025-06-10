@@ -9,6 +9,7 @@ keywords.workspace = true
 license.workspace = true
 repository.workspace = true
 
+
 [features]
 hv = []
 
@@ -24,3 +25,6 @@ kasm-aarch64 = { path = "macros/kasm-aarch64" }
 
 [build-dependencies]
 kdef-pgtable = { path = "../kdef-pgtable" }
+
+[target.'cfg(target_arch = "aarch64")'.build-dependencies]
+# pie-boot-arm-loader = { path = "../loader/pie-boot-arm-loader", artifact = "bin", target = "aarch64-unknown-none" }

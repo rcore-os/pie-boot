@@ -31,16 +31,3 @@ pie-boot-if = { workspace = true }
 prettyplease = "0.2"
 quote = "1.0"
 syn = "2.0"
-
-
-[profile.dev]
-panic = "abort"
-opt-level = 3
-
-[profile.release]
-panic = "abort"
-opt-level = 3
-
-[profile.test]
-panic = "abort"
-opt-level = 3
