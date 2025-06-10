@@ -14,7 +14,9 @@ pub mod lang_items;
 #[unsafe(no_mangle)]
 pub extern "C" fn _main() -> ! {
     clean_bss();
-    init_log();
+    
+
+    init_log(0x44000000 as _);
 
     loop {
         spin_loop();
