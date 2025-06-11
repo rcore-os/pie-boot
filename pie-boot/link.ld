@@ -6,7 +6,7 @@ SECTIONS{
         _text = .;
         KEEP(*(.head.text))
     }
-    .idmap.text : ALIGN(0x1000){
+    .idmap.text : ALIGN(64){
         _idmap_text = .;
         KEEP(*(.idmap.text))
     }

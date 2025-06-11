@@ -37,11 +37,10 @@ impl LineAllocator {
     }
 }
 
-pub fn enable_mmu(kcode_offset: usize, kernal_kcode_start: usize, code_end_phys: usize) {
+pub fn enable_mmu(args: &BootArgs) {
     setup_table_regs();
-    println!("setup table regs ok");
 
-    let addr = new_boot_table(kcode_offset, kernal_kcode_start, code_end_phys);
+    let addr = new_boot_table(args);
     set_table(addr);
 
     setup_sctlr();
@@ -63,13 +62,10 @@ impl Access for LineAllocator {
 }
 
 /// `rsv_space` 在 `boot stack` 之后保留的空间到校
-pub fn new_boot_table(
-    kcode_offset: usize,
-    kernal_kcode_start: usize,
-    code_end_phys: usize,
-) -> PhysAddr {
-    let start = code_end_phys.align_up(Table::PAGE_SIZE) as *mut u8;
-    let size = MB;
+pub fn new_boot_table(args: &BootArgs) -> PhysAddr {
+    let start = args.kcode_end.align_up(Table::PAGE_SIZE) as *mut u8;
+    let size = GB;
+    let kcode_offset = args.kimage_addr_vma as usize - args.kimage_addr_lma as usize;
 
     let mut alloc = LineAllocator::new(start, size);
 
@@ -87,10 +83,10 @@ pub fn new_boot_table(
             2 * MB
         };
 
-        let code_start_phys = kernal_kcode_start.align_down(align);
+        let code_start_phys = args.kimage_addr_lma.align_down(align) as usize;
 
-        let code_start = code_start_phys + kcode_offset;
-        let code_end: usize = (code_end_phys + kcode_offset).align_up(align);
+        let code_start = args.kimage_addr_vma as usize;
+        let code_end: usize = (args.kcode_end as usize + kcode_offset).align_up(align);
 
         let size = (code_end - code_start).max(align);
 
@@ -136,5 +132,7 @@ pub fn new_boot_table(
     }
 
     println!("Table size     : {}", access.used());
+    unsafe { RUTERN.pg_end = access.highest_address() };
+    println!("Table end      : {}", access.highest_address());
     table.paddr()
 }

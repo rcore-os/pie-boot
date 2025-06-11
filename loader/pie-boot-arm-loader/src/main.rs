@@ -20,28 +20,16 @@ use el1::*;
 #[cfg(el = "2")]
 use el2::*;
 use mmu::enable_mmu;
-use pie_boot_if::BootArgs;
+use pie_boot_if::{BootArgs, BootReturn};
 use pie_boot_loader_macros::println;
 
 const MB: usize = 1024 * 1024;
 
 /// The header of the kernel.
-///
-/// # Safety
-///
-/// ## arguments
-///
-/// x0: bootargs
-///
-/// ## return
-///
-/// x0: dtb
-///
-/// x1: tmp boot table end address
 #[unsafe(no_mangle)]
 #[unsafe(naked)]
 #[unsafe(link_section = ".text.init")]
-pub unsafe extern "C" fn _start() -> ! {
+unsafe extern "C" fn _start(_args: &BootArgs) -> ! {
     naked_asm!(
         "
         mov   x19, x0 
@@ -56,12 +44,16 @@ pub unsafe extern "C" fn _start() -> ! {
         "BL     {entry}",
         "mov   x8,  x0",
 
-        "mov   x0, x19",
-        "BR    x8",
+        "
+        adrp x0, {res}
+        add  x0, x0, :lo12:{res}
+        br   x8
+        ",
         stack = sym STACK,
         stack_size = const STACK.len(),
         switch_to_elx = sym switch_to_elx,
         entry = sym entry,
+        res = sym RUTERN,
     )
 }
 
@@ -73,25 +65,21 @@ fn entry(bootargs: &BootArgs) -> *mut () {
         #[cfg(feature = "console")]
         debug::fdt::init_debugcon(bootargs.args[0] as _);
 
-        println!("EL {}", CurrentEL.read(CurrentEL::EL));
-        println!("bootargs : {}", bootargs as *const _ as usize);
-        println!("_start   : {}", bootargs.kimage_addr_vma);
-        println!("_end     : {}", bootargs.kcode_end);
+        println!("EL             : {}", CurrentEL.read(CurrentEL::EL));
+        println!("bootargs       : {}", bootargs as *const _ as usize);
+        println!("_start         : {}", bootargs.kimage_addr_vma);
+        println!("_end           : {}", bootargs.kcode_end);
         let loader_at = loader_at();
 
         println!(
-            "loader   : [{}, {})",
+            "loader         : [{}, {})",
             loader_at,
             loader_at.add(loader_size())
         );
 
-        let code_offset = bootargs.kimage_addr_vma as usize - bootargs.kimage_addr_lma as usize;
+        enable_mmu(bootargs);
 
-        enable_mmu(
-            code_offset as _,
-            bootargs.kimage_addr_lma as _,
-            bootargs.kcode_end as _,
-        );
+        println!("mmu ok");
     }
     bootargs.virt_entry
 }
@@ -139,3 +127,5 @@ fn loader_at() -> *mut u8 {
 
 #[unsafe(link_section = ".stack")]
 static STACK: [u8; 0x1000] = [0; 0x1000];
+
+static mut RUTERN: BootReturn = BootReturn::new();

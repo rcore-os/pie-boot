@@ -6,7 +6,7 @@ mod cache;
 
 use crate::{BOOT_ARGS, start_code};
 use kasm_aarch64::{self as kasm, def_adr_l};
-use pie_boot_if::BootArgs;
+use pie_boot_if::{BootArgs, BootReturn};
 
 const FLAG_LE: usize = 0b0;
 const FLAG_PAGE_SIZE_4K: usize = 0b10;
@@ -94,11 +94,14 @@ fn preserve_boot_args() {
     boot_arg_size = const size_of::<BootArgs>()
     )
 }
-fn virt_entry() {
+fn virt_entry(res: &BootReturn) {
     let args = &raw mut BOOT_ARGS;
-    let args = (unsafe { (* args).clone() });
-
+    let args = (unsafe { (*args).clone() });
     let fdt = args.args[0] as *mut u8;
+    let end = res.pg_end as *mut u8;
 
-    let a = 1.;
+    {
+        drop(fdt);
+        drop(end);
+    }
 }

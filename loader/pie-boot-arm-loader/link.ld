@@ -4,8 +4,7 @@ __page_size = {PAGE_SIZE};
 
 SECTIONS
 {
-    /* . = 0xF40202000; */
-    . = 0x40203000;
+    . = 0xF00000000;
     .text : ALIGN(__page_size) {
         _stext  = .;
         *(.text.init)
@@ -26,7 +25,6 @@ SECTIONS
     } 
 
     _BSS : ALIGN(__page_size)  {
-
         __start_boot_bss = .;
         *(.bss .bss.*)
         *(.sbss .sbss.*)

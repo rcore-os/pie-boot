@@ -24,10 +24,6 @@ const fn _page_end(va: usize) -> usize {
     !((1usize << va) - 1)
 }
 
-fn span_nr_entries(vstart: usize, vend: usize, shift: usize) -> usize {
-    ((vend - 1) >> shift) - (vstart >> shift) + 1
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
