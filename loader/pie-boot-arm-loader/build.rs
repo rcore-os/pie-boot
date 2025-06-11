@@ -7,7 +7,6 @@ fn main() {
     let ld_file = "loader.x";
 
     println!("cargo::rustc-link-arg=-T{ld_file}");
-    // println!("cargo::rustc-link-arg=-no-pie");
     println!("cargo::rustc-link-arg=-znostart-stop-gc");
     println!("cargo::rustc-link-arg=-Map=target/loader.map");
 
