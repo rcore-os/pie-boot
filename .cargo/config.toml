@@ -3,4 +3,4 @@ bindeps = true
 
 [target.'cfg(target_os = "none")']
 runner = "ostool cargo-test"
-rustflags = ["-C", "link-arg=-Map=target/kernel.map"]
+# rustflags = ["-C", "link-arg=-Map=target/kernel.map"]
