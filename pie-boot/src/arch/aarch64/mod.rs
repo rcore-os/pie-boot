@@ -6,7 +6,7 @@ mod cache;
 
 use crate::{BOOT_ARGS, start_code};
 use kasm_aarch64::{self as kasm, def_adr_l};
-use pie_boot_if::{BootArgs, BootReturn};
+use pie_boot_if::{BootArgs, EarlyBootArgs};
 
 const FLAG_LE: usize = 0b0;
 const FLAG_PAGE_SIZE_4K: usize = 0b10;
@@ -86,22 +86,23 @@ fn preserve_boot_args() {
         ",
     boot_args = sym crate::BOOT_ARGS,
     virt_entry = sym virt_entry,
-    args_of_entry_vma = const  offset_of!(BootArgs, virt_entry),
-    args_of_kimage_addr_lma = const  offset_of!(BootArgs, kimage_addr_lma),
-    args_of_kimage_addr_vma = const  offset_of!(BootArgs, kimage_addr_vma),
-    args_of_kcode_end = const  offset_of!(BootArgs, kcode_end),
+    args_of_entry_vma = const  offset_of!(EarlyBootArgs, virt_entry),
+    args_of_kimage_addr_lma = const  offset_of!(EarlyBootArgs, kimage_addr_lma),
+    args_of_kimage_addr_vma = const  offset_of!(EarlyBootArgs, kimage_addr_vma),
+    args_of_kcode_end = const  offset_of!(EarlyBootArgs, kcode_end),
     dcache_inval_poc = sym cache::__dcache_inval_poc,
-    boot_arg_size = const size_of::<BootArgs>()
+    boot_arg_size = const size_of::<EarlyBootArgs>()
     )
 }
-fn virt_entry(res: &BootReturn) {
+fn virt_entry(res: &BootArgs) {
     let args = &raw mut BOOT_ARGS;
-    let args = (unsafe { (*args).clone() });
+    let args = unsafe { (*args).clone() };
     let fdt = args.args[0] as *mut u8;
     let end = res.pg_end as *mut u8;
+    let res_fdt = res.fdt;
+    assert_eq!(res_fdt, fdt as usize);
 
     {
-        drop(fdt);
-        drop(end);
+        let _ = end;
     }
 }

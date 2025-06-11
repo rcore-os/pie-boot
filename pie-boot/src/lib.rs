@@ -6,7 +6,7 @@ mod arch;
 
 mod loader;
 
-use pie_boot_if::BootArgs;
+use pie_boot_if::EarlyBootArgs;
 use pie_boot_macros::start_code;
 
-static mut BOOT_ARGS: BootArgs = BootArgs::new();
+static mut BOOT_ARGS: EarlyBootArgs = EarlyBootArgs::new();

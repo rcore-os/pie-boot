@@ -20,16 +20,21 @@ use el1::*;
 #[cfg(el = "2")]
 use el2::*;
 use mmu::enable_mmu;
-use pie_boot_if::{BootArgs, BootReturn};
+use pie_boot_if::{BootArgs, EarlyBootArgs};
 use pie_boot_loader_macros::println;
 
 const MB: usize = 1024 * 1024;
+
+#[unsafe(link_section = ".stack")]
+static STACK: [u8; 0x8000] = [0; 0x8000];
+
+static mut RUTERN: BootArgs = BootArgs::new();
 
 /// The header of the kernel.
 #[unsafe(no_mangle)]
 #[unsafe(naked)]
 #[unsafe(link_section = ".text.init")]
-unsafe extern "C" fn _start(_args: &BootArgs) -> ! {
+unsafe extern "C" fn _start(_args: &EarlyBootArgs) -> ! {
     naked_asm!(
         "
         mov   x19, x0 
@@ -57,16 +62,23 @@ unsafe extern "C" fn _start(_args: &BootArgs) -> ! {
     )
 }
 
-fn entry(bootargs: &BootArgs) -> *mut () {
+fn entry(bootargs: &EarlyBootArgs) -> *mut () {
     enable_fp();
     unsafe {
         clean_bss();
+        RUTERN.fdt = bootargs.args[0];
 
         #[cfg(feature = "console")]
-        debug::fdt::init_debugcon(bootargs.args[0] as _);
+        debug::fdt::init_debugcon(RUTERN.fdt as _);
+        println!("fdt            : {}", RUTERN.fdt);
+        let sp: usize;
+        asm!("mov {}, sp", out(reg) sp);
+        println!("sp             : {}", sp);
 
         println!("EL             : {}", CurrentEL.read(CurrentEL::EL));
         println!("bootargs       : {}", bootargs as *const _ as usize);
+        println!("res            : {}", &raw const RUTERN as usize);
+
         println!("_start         : {}", bootargs.kimage_addr_vma);
         println!("_end           : {}", bootargs.kcode_end);
         let loader_at = loader_at();
@@ -80,6 +92,7 @@ fn entry(bootargs: &BootArgs) -> *mut () {
         enable_mmu(bootargs);
 
         println!("mmu ok");
+        println!("fdt           : {}", RUTERN.fdt);
     }
     bootargs.virt_entry
 }
@@ -124,8 +137,3 @@ fn loader_at() -> *mut u8 {
     }
     at
 }
-
-#[unsafe(link_section = ".stack")]
-static STACK: [u8; 0x1000] = [0; 0x1000];
-
-static mut RUTERN: BootReturn = BootReturn::new();

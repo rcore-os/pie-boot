@@ -37,7 +37,7 @@ impl LineAllocator {
     }
 }
 
-pub fn enable_mmu(args: &BootArgs) {
+pub fn enable_mmu(args: &EarlyBootArgs) {
     setup_table_regs();
 
     let addr = new_boot_table(args);
@@ -62,7 +62,7 @@ impl Access for LineAllocator {
 }
 
 /// `rsv_space` 在 `boot stack` 之后保留的空间到校
-pub fn new_boot_table(args: &BootArgs) -> PhysAddr {
+pub fn new_boot_table(args: &EarlyBootArgs) -> PhysAddr {
     let start = args.kcode_end.align_up(Table::PAGE_SIZE) as *mut u8;
     let size = GB;
     let kcode_offset = args.kimage_addr_vma as usize - args.kimage_addr_lma as usize;
