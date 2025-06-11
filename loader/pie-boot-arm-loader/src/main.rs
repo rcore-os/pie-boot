@@ -20,13 +20,10 @@ use el1::*;
 #[cfg(el = "2")]
 use el2::*;
 use mmu::enable_mmu;
-use num_align::NumAlign;
-use paging::TableGeneric;
 use pie_boot_if::BootArgs;
 use pie_boot_loader_macros::println;
 
 const MB: usize = 1024 * 1024;
-const STACK_SIZE: usize = 4 * MB;
 
 /// The header of the kernel.
 ///
@@ -56,16 +53,17 @@ pub unsafe extern "C" fn _start() -> ! {
 
         "mov   x0, x19",
         "BL     {entry}",
-        "mov   x1, x0",
+        "mov   x8,  x0",
 
         "mov   x0, x19",
-        "BR    x21",
+        "BR    x8",
         switch_to_elx = sym switch_to_elx,
         entry = sym entry,
     )
 }
 
-fn entry(bootargs: &BootArgs) -> usize {
+fn entry(args: *mut BootArgs) -> *mut () {
+    let bootargs = unsafe { &*args }.clone();
     enable_fp();
     unsafe {
         clean_bss();
@@ -81,12 +79,11 @@ fn entry(bootargs: &BootArgs) -> usize {
 
         enable_mmu(
             code_offset as _,
-            bootargs.kimage_addr_vma as _,
+            bootargs.kimage_addr_lma as _,
             bootargs.kcode_end as _,
         );
-
-        0
     }
+    bootargs.virt_entry
 }
 
 #[inline]
