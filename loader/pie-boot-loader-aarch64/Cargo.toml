@@ -7,7 +7,7 @@ keywords.workspace = true
 license.workspace = true
 name = "pie-boot-loader-aarch64"
 repository.workspace = true
-version.workspace = true
+version = "0.1.1"
 
 [features]
 console = ["dep:any-uart"]

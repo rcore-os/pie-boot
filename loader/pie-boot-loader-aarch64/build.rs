@@ -8,7 +8,7 @@ fn main() {
 
     println!("cargo::rustc-link-arg=-T{ld_file}");
     println!("cargo::rustc-link-arg=-znostart-stop-gc");
-    println!("cargo::rustc-link-arg=-Map=target/loader.map");
+    // println!("cargo::rustc-link-arg=-Map=target/loader.map");
 
     let target = std::env::var("TARGET").unwrap();
 
