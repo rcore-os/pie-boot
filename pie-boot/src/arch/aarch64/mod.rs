@@ -4,9 +4,9 @@ def_adr_l!();
 
 mod cache;
 
-use crate::{BOOT_ARGS, start_code};
+use crate::start_code;
 use kasm_aarch64::{self as kasm, def_adr_l};
-use pie_boot_if::{BootArgs, EarlyBootArgs};
+use pie_boot_if::EarlyBootArgs;
 
 const FLAG_LE: usize = 0b0;
 const FLAG_PAGE_SIZE_4K: usize = 0b10;
