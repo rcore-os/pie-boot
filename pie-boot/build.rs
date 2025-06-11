@@ -6,6 +6,7 @@ fn main() {
     println!("cargo:rustc-link-search={}", out_dir().display());
 
     let kimage_vaddr = KIMAGE_VADDR;
+    let page_size = PAGE_SIZE;
     // let kimage_vaddr = 0x4020_0000;
 
     let mut ld = include_str!("link.ld").to_string();
@@ -17,6 +18,7 @@ fn main() {
     }
 
     set_var!(kimage_vaddr);
+    set_var!(page_size);
 
     let mut file =
         std::fs::File::create(out_dir().join("pie_boot.x")).expect("pie_boot.x create failed");

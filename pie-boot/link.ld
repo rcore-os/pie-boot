@@ -1,5 +1,5 @@
 . = {kimage_vaddr};
-PROVIDE(PAGE_SIZE  = 0x0);
+PAGE_SIZE = {page_size};
 
 SECTIONS{
     .head.text : {
