@@ -71,16 +71,11 @@ fn entry(bootargs: &EarlyBootArgs) -> *mut () {
         #[cfg(feature = "console")]
         debug::fdt::init_debugcon(RUTERN.fdt as _);
         println!("fdt            : {}", RUTERN.fdt);
-        let sp: usize;
-        asm!("mov {}, sp", out(reg) sp);
-        println!("sp             : {}", sp);
 
         println!("EL             : {}", CurrentEL.read(CurrentEL::EL));
-        println!("bootargs       : {}", bootargs as *const _ as usize);
-        println!("res            : {}", &raw const RUTERN as usize);
 
         println!("_start         : {}", bootargs.kimage_addr_vma);
-        println!("_end           : {}", bootargs.kcode_end);
+
         let loader_at = loader_at();
 
         println!(
@@ -92,7 +87,6 @@ fn entry(bootargs: &EarlyBootArgs) -> *mut () {
         enable_mmu(bootargs);
 
         println!("mmu ok");
-        println!("fdt           : {}", RUTERN.fdt);
     }
     bootargs.virt_entry
 }

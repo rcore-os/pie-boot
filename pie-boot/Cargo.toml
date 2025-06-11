@@ -22,5 +22,4 @@ kasm-aarch64 = {path = "macros/kasm-aarch64", version = "0.1"}
 
 [build-dependencies]
 kdef-pgtable = {workspace = true}
-# TODO: 目前必须使用 target = "target"，否则在依赖中不会编译 bin, issue: https://github.com/rust-lang/cargo/issues/15095
-pie-boot-loader-aarch64 = {path = "../loader/pie-boot-loader-aarch64", artifact = "bin", target = "target", version = "0.1"}
+pie-boot-loader-aarch64 = {path = "../loader/pie-boot-loader-aarch64", artifact = "bin", target = "aarch64-unknown-none", version = "0.1"}
