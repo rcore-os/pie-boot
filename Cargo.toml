@@ -15,7 +15,7 @@ description = "Boot kernel code with mmu."
 edition = "2024"
 keywords = ["os"]
 license = "MIT"
-repository = "https://github.com/rcore-os/somehal"
+repository = "https://github.com/rcore-os/pie-boot"
 version = "0.1.0"
 
 [workspace.dependencies]
