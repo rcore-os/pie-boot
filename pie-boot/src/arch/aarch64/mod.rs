@@ -4,7 +4,7 @@ def_adr_l!();
 
 mod cache;
 
-use crate::start_code;
+use crate::{BOOT_ARGS, start_code};
 use kasm_aarch64::{self as kasm, def_adr_l};
 use pie_boot_if::BootArgs;
 
@@ -95,6 +95,10 @@ fn preserve_boot_args() {
     )
 }
 fn virt_entry() {
-    let a = 1;
-}
+    let args = &raw mut BOOT_ARGS;
+    let args = (unsafe { (* args).clone() });
 
+    let fdt = args.args[0] as *mut u8;
+
+    let a = 1.;
+}

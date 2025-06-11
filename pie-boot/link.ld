@@ -18,16 +18,4 @@ SECTIONS{
     }
 } INSERT BEFORE .data
 
-SECTIONS{
-    .init_idmap_pg_dir  : ALIGN(PAGE_SIZE){
-        init_idmap_pg_dir = .;
-        . += PAGE_SIZE;
-    }
-    .early_stack : {
-        . += 0x1000;
-        __early_stack_top = .;
-    }
-
-}  INSERT AFTER .bss
-
 ASSERT(PAGE_SIZE != 0x0, "PAGE_SIZE must be defined");

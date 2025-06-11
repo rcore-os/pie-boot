@@ -7,6 +7,7 @@ SECTIONS
     /* . = 0xF40202000; */
     . = 0x40203000;
     .text : ALIGN(__page_size) {
+        _stext  = .;
         *(.text.init)
         *(.text .text.*)
     } 
@@ -18,21 +19,24 @@ SECTIONS
     } 
     
     .data : ALIGN(__page_size) {
+
         *(.data .data.*)
         . = ALIGN(__page_size);
         *(.sdata.*)
     } 
 
-    .bss (NOLOAD) : ALIGN(__page_size)  {
+    _BSS : ALIGN(__page_size)  {
+
         __start_boot_bss = .;
         *(.bss .bss.*)
         *(.sbss .sbss.*)
         *(COMMON)
         . = ALIGN(__page_size);
         __stop_boot_bss = .;
-        . += __page_size;
+        *(.stack);
         __stack_top = .;
     } 
+    _end = .;
 
 	/DISCARD/ : {
         *(.comment) *(.gnu*) *(.note*) *(.eh_frame*) 

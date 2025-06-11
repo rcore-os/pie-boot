@@ -1,7 +1,7 @@
 #![no_std]
 #![no_main]
 
-use core::arch::naked_asm;
+use core::arch::{asm, naked_asm};
 
 mod console;
 #[cfg(feature = "console")]
@@ -45,7 +45,8 @@ pub unsafe extern "C" fn _start() -> ! {
     naked_asm!(
         "
         mov   x19, x0 
-        adr   x0, __stack_top
+        adr   x0, {stack}
+        add   x0, x0, {stack_size}
         mov   sp, x0
 
         mov   x0, x19
@@ -57,13 +58,14 @@ pub unsafe extern "C" fn _start() -> ! {
 
         "mov   x0, x19",
         "BR    x8",
+        stack = sym STACK,
+        stack_size = const STACK.len(),
         switch_to_elx = sym switch_to_elx,
         entry = sym entry,
     )
 }
 
-fn entry(args: *mut BootArgs) -> *mut () {
-    let bootargs = unsafe { &*args }.clone();
+fn entry(bootargs: &BootArgs) -> *mut () {
     enable_fp();
     unsafe {
         clean_bss();
@@ -72,8 +74,16 @@ fn entry(args: *mut BootArgs) -> *mut () {
         debug::fdt::init_debugcon(bootargs.args[0] as _);
 
         println!("EL {}", CurrentEL.read(CurrentEL::EL));
-
+        println!("bootargs : {}", bootargs as *const _ as usize);
         println!("_start   : {}", bootargs.kimage_addr_vma);
+        println!("_end     : {}", bootargs.kcode_end);
+        let loader_at = loader_at();
+
+        println!(
+            "loader   : [{}, {})",
+            loader_at,
+            loader_at.add(loader_size())
+        );
 
         let code_offset = bootargs.kimage_addr_vma as usize - bootargs.kimage_addr_lma as usize;
 
@@ -106,3 +116,26 @@ unsafe fn clean_bss() {
         }
     }
 }
+
+fn loader_size() -> usize {
+    unsafe extern "C" {
+        fn _stext();
+        fn _end();
+    }
+    _end as usize - _stext as usize
+}
+fn loader_at() -> *mut u8 {
+    let at;
+    unsafe {
+        asm!("
+        adrp {0}, _stext
+        add  {0}, {0}, :lo12:_stext
+        ",
+        out(reg) at
+        );
+    }
+    at
+}
+
+#[unsafe(link_section = ".stack")]
+static STACK: [u8; 0x1000] = [0; 0x1000];
