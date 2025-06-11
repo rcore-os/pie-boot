@@ -2,7 +2,8 @@
 
 use core::hint::spin_loop;
 
-use log::debug;
+use log::{debug, info};
+use pie_boot::BootArgs;
 
 use crate::debug::init_log;
 
@@ -11,12 +12,15 @@ extern crate pie_boot;
 mod debug;
 pub mod lang_items;
 
-#[unsafe(no_mangle)]
-pub extern "C" fn _main() -> ! {
+#[pie_boot::entry]
+fn main(args: &BootArgs) -> ! {
     clean_bss();
-    
 
-    init_log(0x44000000 as _);
+    init_log(args.fdt as _);
+
+    debug!("boot args: {:?}", args);
+
+    info!("All tests passed!");
 
     loop {
         spin_loop();

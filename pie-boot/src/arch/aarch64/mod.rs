@@ -66,7 +66,7 @@ fn preserve_boot_args() {
 	stp	x0,  x1, [x8]			// x0 .. x3 at kernel entry
 	stp	x2,  x3, [x8, #16]
 
-    LDR  x0,  ={virt_entry}
+    LDR  x0,  =__pie_boot_main
     str  x0,  [x8, {args_of_entry_vma}]
     
     adr_l x0,  _start
@@ -85,7 +85,6 @@ fn preserve_boot_args() {
 	b	{dcache_inval_poc}		// tail call
         ",
     boot_args = sym crate::BOOT_ARGS,
-    virt_entry = sym virt_entry,
     args_of_entry_vma = const  offset_of!(EarlyBootArgs, virt_entry),
     args_of_kimage_addr_lma = const  offset_of!(EarlyBootArgs, kimage_addr_lma),
     args_of_kimage_addr_vma = const  offset_of!(EarlyBootArgs, kimage_addr_vma),
@@ -94,15 +93,15 @@ fn preserve_boot_args() {
     boot_arg_size = const size_of::<EarlyBootArgs>()
     )
 }
-fn virt_entry(res: &BootArgs) {
-    let args = &raw mut BOOT_ARGS;
-    let args = unsafe { (*args).clone() };
-    let fdt = args.args[0] as *mut u8;
-    let end = res.pg_end as *mut u8;
-    let res_fdt = res.fdt;
-    assert_eq!(res_fdt, fdt as usize);
+// fn virt_entry(res: &BootArgs) {
+//     let args = &raw mut BOOT_ARGS;
+//     let args = unsafe { (*args).clone() };
+//     let fdt = args.args[0] as *mut u8;
+//     let end = res.pg_end as *mut u8;
+//     let res_fdt = res.fdt;
+//     assert_eq!(res_fdt, fdt as usize);
 
-    {
-        let _ = end;
-    }
-}
+//     {
+//         let _ = end;
+//     }
+// }

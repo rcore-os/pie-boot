@@ -96,5 +96,5 @@ impl Parse for StartCodeArgs {
 /// ```
 #[proc_macro_attribute]
 pub fn entry(args: TokenStream, input: TokenStream) -> TokenStream {
-    entry::entry(args, input, "__somehal_main")
+    entry::entry(args, input, "__pie_boot_main")
 }

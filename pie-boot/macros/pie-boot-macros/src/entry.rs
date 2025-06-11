@@ -13,7 +13,7 @@ pub fn entry(args: TokenStream, input: TokenStream, name: &str) -> TokenStream {
     if f.sig.inputs.len() != 1 {
         return parse::Error::new(
             f.sig.inputs.last().unwrap().span(),
-            "`#[entry]` function ",
+            "`#[entry]` function need one argument `&BootArgs`",
         )
         .to_compile_error()
         .into();
@@ -59,7 +59,7 @@ pub fn entry(args: TokenStream, input: TokenStream, name: &str) -> TokenStream {
         #[allow(non_snake_case)]
         #[unsafe(no_mangle)]
         #(#attrs)*
-        pub #unsafety extern "Rust" fn #name(#args) {
+        pub #unsafety extern "C" fn #name(#args) {
             #(#stmts)*
         }
     )

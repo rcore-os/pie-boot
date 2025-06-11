@@ -1,6 +1,6 @@
 #![no_std]
 
-use core::{mem::MaybeUninit, num::NonZero};
+use core::{fmt::Debug, mem::MaybeUninit};
 
 #[repr(C, align(64))]
 #[derive(Clone)]
@@ -31,6 +31,15 @@ pub struct BootArgs {
     pub fdt: usize,
     /// 页表结束物理地址
     pub pg_end: usize,
+}
+
+impl Debug for BootArgs {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        f.debug_struct("BootArgs")
+            .field("fdt", &(self.fdt as *mut u8))
+            .field("pg_end", &(self.pg_end as *mut u8))
+            .finish()
+    }
 }
 
 impl BootArgs {
