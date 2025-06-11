@@ -1,7 +1,13 @@
 [package]
 name = "pie-boot-macros"
-version = "0.1.0"
-edition = "2024"
+authors.workspace = true
+categories.workspace = true
+description.workspace = true
+edition.workspace = true
+keywords.workspace = true
+license.workspace = true
+repository.workspace = true
+version.workspace = true
 
 [lib]
 proc-macro = true
