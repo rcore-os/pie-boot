@@ -177,13 +177,17 @@ version = "0.1.0"
 dependencies = [
  "kasm-aarch64",
  "kdef-pgtable",
- "pie-boot-arm-loader",
  "pie-boot-if",
+ "pie-boot-loader-aarch64",
  "pie-boot-macros",
 ]
 
 [[package]]
-name = "pie-boot-arm-loader"
+name = "pie-boot-if"
+version = "0.1.0"
+
+[[package]]
+name = "pie-boot-loader-aarch64"
 version = "0.1.0"
 dependencies = [
  "aarch64-cpu",
@@ -201,10 +205,6 @@ dependencies = [
  "syn",
  "thiserror",
 ]
-
-[[package]]
-name = "pie-boot-if"
-version = "0.1.0"
 
 [[package]]
 name = "pie-boot-loader-macros"

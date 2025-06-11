@@ -5,7 +5,7 @@ description.workspace = true
 edition.workspace = true
 keywords.workspace = true
 license.workspace = true
-name = "pie-boot-arm-loader"
+name = "pie-boot-loader-aarch64"
 repository.workspace = true
 version.workspace = true
 

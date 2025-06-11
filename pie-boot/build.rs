@@ -36,7 +36,7 @@ fn out_dir() -> PathBuf {
 
 fn aarch64_set_loader() {
     let loader_path =
-        std::env::var_os("CARGO_BIN_FILE_PIE_BOOT_ARM_LOADER").expect("loader binary");
+        std::env::var_os("CARGO_BIN_FILE_PIE_BOOT_LOADER_AARCH64").expect("loader binary");
     let loader_dst = out_dir().join("loader.bin");
 
     let status = Command::new("rust-objcopy")

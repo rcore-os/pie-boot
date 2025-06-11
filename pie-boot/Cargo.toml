@@ -22,4 +22,4 @@ kasm-aarch64 = {path = "macros/kasm-aarch64"}
 
 [build-dependencies]
 kdef-pgtable = {path = "../kdef-pgtable"}
-pie-boot-arm-loader = {path = "../loader/pie-boot-arm-loader", artifact = "bin", target = "aarch64-unknown-none"}
+pie-boot-loader-aarch64 = {path = "../loader/pie-boot-loader-aarch64", artifact = "bin", target = "aarch64-unknown-none"}
