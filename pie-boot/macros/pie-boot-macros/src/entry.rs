@@ -1,10 +1,7 @@
-use darling::{FromMeta, ast::NestedMeta};
 use proc_macro::TokenStream;
 use proc_macro2::Span;
 use quote::{format_ident, quote};
-use syn::{
-    FnArg, ItemFn, PathArguments, Type, Visibility, parse, parse_macro_input, spanned::Spanned,
-};
+use syn::{ItemFn, Visibility, parse, parse_macro_input, spanned::Spanned};
 
 pub fn entry(args: TokenStream, input: TokenStream, name: &str) -> TokenStream {
     let f = parse_macro_input!(input as ItemFn);

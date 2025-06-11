@@ -62,7 +62,6 @@ impl Parse for StartCodeArgs {
     }
 }
 
-
 /// Attribute to declare the entry point of the program
 ///
 /// **IMPORTANT**: This attribute must appear exactly *once* in the dependency graph. Also, if you
@@ -86,9 +85,9 @@ impl Parse for StartCodeArgs {
 ///
 /// ``` no_run
 /// # #![no_main]
-/// # use sparreal_macros::entry;
+/// # use pie_boot::entry;
 /// #[entry]
-/// fn main() -> ! {
+/// fn main(args: &pie_boot::BootArgs) -> ! {
 ///     loop {
 ///         /* .. */
 ///     }

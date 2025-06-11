@@ -12,3 +12,7 @@ pub use pie_boot_macros::entry;
 use pie_boot_macros::start_code;
 
 static mut BOOT_ARGS: EarlyBootArgs = EarlyBootArgs::new();
+
+unsafe extern "Rust" {
+    fn __pie_boot_main(args: &BootArgs);
+}
