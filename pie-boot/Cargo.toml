@@ -7,11 +7,11 @@ keywords.workspace = true
 license.workspace = true
 name = "pie-boot"
 repository.workspace = true
-version = "0.1.1"
+version = "0.1.2"
 
 [features]
-hv = []
 dev-local-code = []
+hv = []
 
 [dependencies]
 kdef-pgtable = {workspace = true}
@@ -22,5 +22,5 @@ pie-boot-macros = {path = "macros/pie-boot-macros", version = "0.1"}
 kasm-aarch64 = {path = "macros/kasm-aarch64", version = "0.1"}
 
 [build-dependencies]
-bindeps-simple = {git = "https://github.com/rcore-os/bindeps-simple.git"}
+bindeps-simple = {version = "0.1"}
 kdef-pgtable = {workspace = true}
