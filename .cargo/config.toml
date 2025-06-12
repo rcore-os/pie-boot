@@ -1,5 +1,2 @@
-[unstable]
-bindeps = true
-
 [target.'cfg(target_os = "none")']
 runner = "ostool cargo-test"

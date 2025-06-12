@@ -34,9 +34,26 @@ fn out_dir() -> PathBuf {
     PathBuf::from(std::env::var("OUT_DIR").unwrap())
 }
 
+fn project_dir() -> PathBuf {
+    target_dir().ancestors().nth(3).unwrap().to_path_buf()
+}
+
 fn aarch64_set_loader() {
-    let loader_path =
-        std::env::var_os("CARGO_BIN_FILE_PIE_BOOT_LOADER_AARCH64").expect("loader binary");
+    let mut builder = bindeps_simple::Builder::new(
+        "pie-boot-loader-aarch64",
+        "0.1.2",
+        "aarch64-unknown-none-softfloat",
+    )
+    // .env("RUSTFLAGS", "-C relocation-model=pie -Clink-args=-pie")
+    .cargo_args(&["-Z", "build-std=core,alloc"]);
+
+    if std::env::var("CARGO_FEATURE_DEV_LOCAL_CODE").is_ok() {
+        builder = builder.source_dir(project_dir().join("loader").join("pie-boot-loader-aarch64"));
+    }
+
+    builder.build().unwrap();
+
+    let loader_path = out_dir().join("pie-boot-loader-aarch64");
     let loader_dst = out_dir().join("loader.bin");
 
     let status = Command::new("rust-objcopy")

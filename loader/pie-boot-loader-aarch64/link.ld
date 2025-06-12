@@ -34,6 +34,11 @@ SECTIONS
         *(.stack);
         __stack_top = .;
     } 
+    .rela.dyn : {
+        __rela_dyn_start = .;
+        *(.rela .rela*)
+        __rela_dyn_end = .;
+    }
     _end = .;
 
 	/DISCARD/ : {
