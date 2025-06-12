@@ -41,15 +41,15 @@ fn project_dir() -> PathBuf {
 fn aarch64_set_loader() {
     let mut builder = bindeps_simple::Builder::new(
         "pie-boot-loader-aarch64",
-        "0.1.3",
+        "0.1.4",
         "aarch64-unknown-none-softfloat",
     )
     .env("RUSTFLAGS", "-C relocation-model=pic -Clink-args=-pie")
     .cargo_args(&["-Z", "build-std=core,alloc"]);
 
-    // if std::env::var("CARGO_FEATURE_DEV_LOCAL_CODE").is_ok() {
-    builder = builder.source_dir(project_dir());
-    // }
+    if std::env::var("CARGO_FEATURE_DEV_LOCAL_CODE").is_ok() {
+        builder = builder.source_dir(project_dir());
+    }
 
     builder.build().unwrap();
 
