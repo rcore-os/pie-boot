@@ -1,10 +1,7 @@
 #![no_std]
 #![no_main]
 
-use core::{
-    arch::{asm, naked_asm},
-    fmt::Write,
-};
+use core::arch::{asm, naked_asm};
 
 #[macro_use]
 mod _macros;
@@ -28,10 +25,6 @@ use el1::*;
 use el2::*;
 use mmu::enable_mmu;
 use pie_boot_if::{BootArgs, EarlyBootArgs};
-
-use crate::console::Stdout;
-
-const MB: usize = 1024 * 1024;
 
 #[unsafe(link_section = ".stack")]
 static STACK: [u8; 0x8000] = [0; 0x8000];
