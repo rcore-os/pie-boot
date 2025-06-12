@@ -44,17 +44,19 @@ fn aarch64_set_loader() {
         "0.1.3",
         "aarch64-unknown-none-softfloat",
     )
-    .env("RUSTFLAGS", "-C relocation-model=pie -Clink-args=-pie")
+    .env("RUSTFLAGS", "-C relocation-model=pic -Clink-args=-pie")
     .cargo_args(&["-Z", "build-std=core,alloc"]);
 
-    if std::env::var("CARGO_FEATURE_DEV_LOCAL_CODE").is_ok() {
-        builder = builder.source_dir(project_dir().join("loader").join("pie-boot-loader-aarch64"));
-    }
+    // if std::env::var("CARGO_FEATURE_DEV_LOCAL_CODE").is_ok() {
+    builder = builder.source_dir(project_dir());
+    // }
 
     builder.build().unwrap();
 
     let loader_path = out_dir().join("pie-boot-loader-aarch64");
     let loader_dst = out_dir().join("loader.bin");
+
+    let _ = std::fs::remove_file(&loader_dst);
 
     let status = Command::new("rust-objcopy")
         .args(["--strip-all", "-O", "binary"])

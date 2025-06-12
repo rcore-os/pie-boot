@@ -1,3 +1,5 @@
+use core::fmt::Write;
+
 use crate::paging::PagingError;
 
 #[cfg(feature = "console")]
@@ -123,7 +125,7 @@ macro_rules! early_err {
         match $f {
             Ok(v) => v,
             Err(_e) => {
-                $crate::println!("{}", _e);
+                println!("{}", _e);
                 loop {}
             }
         }
@@ -132,10 +134,23 @@ macro_rules! early_err {
         match $f {
             Ok(v) => v,
             Err(_e) => {
-                $crate::println!("{}:", $msg);
-                $crate::println!("{}", _e);
+                println!("{}:", $msg);
+                println!("{}", _e);
                 loop {}
             }
         }
     };
+}
+
+pub struct Stdout;
+
+impl Write for Stdout {
+    fn write_str(&mut self, s: &str) -> core::fmt::Result {
+        __print_str(s);
+        Ok(())
+    }
+}
+
+pub fn __print(args: core::fmt::Arguments) {
+    let _ = Stdout {}.write_fmt(args);
 }

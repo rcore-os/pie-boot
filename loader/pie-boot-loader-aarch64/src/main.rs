@@ -1,7 +1,13 @@
 #![no_std]
 #![no_main]
 
-use core::arch::{asm, naked_asm};
+use core::{
+    arch::{asm, naked_asm},
+    fmt::Write,
+};
+
+#[macro_use]
+mod _macros;
 
 mod console;
 #[cfg(feature = "console")]
@@ -13,6 +19,7 @@ mod el2;
 mod lang_items;
 mod mmu;
 mod paging;
+mod relocate;
 
 use aarch64_cpu::{asm::barrier, registers::*};
 #[cfg(el = "1")]
@@ -21,7 +28,8 @@ use el1::*;
 use el2::*;
 use mmu::enable_mmu;
 use pie_boot_if::{BootArgs, EarlyBootArgs};
-use pie_boot_loader_macros::println;
+
+use crate::console::Stdout;
 
 const MB: usize = 1024 * 1024;
 
@@ -66,27 +74,31 @@ fn entry(bootargs: &EarlyBootArgs) -> *mut () {
     enable_fp();
     unsafe {
         clean_bss();
-        RUTERN.fdt = bootargs.args[0];
+        relocate::apply();
+
+        let fdt = bootargs.args[0];
 
         #[cfg(feature = "console")]
-        debug::fdt::init_debugcon(RUTERN.fdt as _);
-        println!("fdt            : {}", RUTERN.fdt);
+        debug::fdt::init_debugcon(fdt as _);
 
-        println!("EL             : {}", CurrentEL.read(CurrentEL::EL));
+        printkv!("fdt", "{fdt:#x}");
 
-        println!("_start         : {}", bootargs.kimage_addr_vma);
+        printkv!("EL", "{}", CurrentEL.read(CurrentEL::EL));
+
+        printkv!("_start", "{:p}", bootargs.kimage_addr_vma);
 
         let loader_at = loader_at();
 
-        println!(
-            "loader         : [{}, {})",
+        printkv!(
+            "loader",
+            "[{:p}, {:p})",
             loader_at,
             loader_at.add(loader_size())
         );
-
+        RUTERN.fdt = bootargs.args[0];
         enable_mmu(bootargs);
 
-        println!("mmu ok");
+        println!("mmu success");
     }
     bootargs.virt_entry
 }
@@ -98,13 +110,10 @@ fn enable_fp() {
 }
 
 unsafe fn clean_bss() {
-    unsafe extern "C" {
-        fn __start_boot_bss();
-        fn __stop_boot_bss();
-    }
+    concat!();
     unsafe {
-        let start = __start_boot_bss as *mut u8;
-        let end = __stop_boot_bss as *mut u8;
+        let start = sym_lma_extern!(__start_boot_bss) as *mut u8;
+        let end = sym_lma_extern!(__stop_boot_bss) as *mut u8;
         let len = end as usize - start as usize;
         for i in 0..len {
             start.add(i).write(0);

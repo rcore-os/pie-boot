@@ -1,7 +1,8 @@
-use crate::paging::{Access, GB, MapConfig, PageTableRef, PhysAddr, TableGeneric};
+use crate::{
+    paging::{Access, GB, MB, MapConfig, PageTableRef, PhysAddr, TableGeneric},
+    *,
+};
 use num_align::{NumAlign, NumAssertAlign};
-
-use crate::*;
 
 pub struct LineAllocator {
     pub start: *mut u8,
@@ -71,7 +72,7 @@ pub fn new_boot_table(args: &EarlyBootArgs) -> PhysAddr {
 
     let access = &mut alloc;
 
-    println!("BootTable space: [{}, {})", access.start, {
+    printkv!("BootTable space", "[{:p}, {:#x})", access.start, {
         access.start as usize + size
     });
 
@@ -90,8 +91,9 @@ pub fn new_boot_table(args: &EarlyBootArgs) -> PhysAddr {
 
         let size = (code_end - code_start).max(align);
 
-        println!(
-            "code           : [{}, {}) -> [{}, {})",
+        printkv!(
+            "code",
+            "[{:#x}, {:#x}) -> [{:#x}, {:#x})",
             code_start,
             code_start + size,
             code_start_phys,
@@ -117,7 +119,7 @@ pub fn new_boot_table(args: &EarlyBootArgs) -> PhysAddr {
         };
         let start = 0x0usize;
 
-        println!("eq             : [{}, {})", start, start + size);
+        printkv!("eq", "[{:#x}, {:#x})", start, start + size);
         early_err!(table.map(
             MapConfig {
                 vaddr: start.into(),
@@ -131,8 +133,8 @@ pub fn new_boot_table(args: &EarlyBootArgs) -> PhysAddr {
         ));
     }
 
-    println!("Table size     : {}", access.used());
+    printkv!("Table size", "{:#x}", access.used());
     unsafe { RUTERN.pg_end = access.highest_address() };
-    println!("Table end      : {}", access.highest_address());
+    printkv!("Table end", "{:#x}", access.highest_address());
     table.paddr()
 }

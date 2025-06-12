@@ -11,5 +11,4 @@
         // for xtask
         "system"
     ],
-    "rust-analyzer.trace.server": "verbose",
 }
