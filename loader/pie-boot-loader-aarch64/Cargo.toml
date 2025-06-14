@@ -1,6 +1,9 @@
+cargo-features = ["per-package-target"]
+
 [package]
 authors.workspace = true
 categories.workspace = true
+default-target = "aarch64-unknown-none-softfloat"
 description.workspace = true
 edition.workspace = true
 keywords.workspace = true

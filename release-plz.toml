@@ -1,5 +1,4 @@
 [workspace]
-git_release_enable = false # disable GitHub/Gitea releases
 
 [[package]]
 name = "test-some-rt"
