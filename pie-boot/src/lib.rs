@@ -4,13 +4,16 @@
 #[path = "arch/aarch64/mod.rs"]
 mod arch;
 
+#[cfg(target_os = "none")]
 mod loader;
 
 pub use pie_boot_if::BootArgs;
 use pie_boot_if::EarlyBootArgs;
 pub use pie_boot_macros::entry;
+#[allow(unused)]
 use pie_boot_macros::start_code;
 
+#[allow(unused)]
 static mut BOOT_ARGS: EarlyBootArgs = EarlyBootArgs::new();
 
 unsafe extern "Rust" {
