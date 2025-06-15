@@ -1,10 +1,10 @@
 #![cfg_attr(target_os = "none", no_std)]
+#![cfg(target_os = "none")]
 
 #[cfg(target_arch = "aarch64")]
 #[path = "arch/aarch64/mod.rs"]
 mod arch;
 
-#[cfg(target_os = "none")]
 mod loader;
 
 pub use pie_boot_if::BootArgs;
