@@ -5,6 +5,9 @@ on:
     branches:
       - master
 
+env:
+  qemu-version: 9.2.4
+
 jobs:
   release-plz-release:
     name: Release-plz release
@@ -26,6 +29,10 @@ jobs:
           cache-targets: false
         
       - run: cargo install cargo-binutils
+      - uses: arceos-org/setup-qemu@v1
+        with:
+          version: ${{ env.qemu-version }}
+          arch_list: aarch64
       - run: cargo install ostool
       - name: Build
         run: cargo build -p pie-boot --target aarch64-unknown-none
