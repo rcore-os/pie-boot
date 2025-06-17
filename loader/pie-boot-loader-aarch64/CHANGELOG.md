@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.11](https://github.com/rcore-os/pie-boot/compare/pie-boot-loader-aarch64-v0.1.10...pie-boot-loader-aarch64-v0.1.11) - 2025-06-17
+
+### Added
+
+- enhance memory management with CacheKind and reserve area tracking
+
 ## [0.1.10](https://github.com/rcore-os/pie-boot/compare/pie-boot-loader-aarch64-v0.1.9...pie-boot-loader-aarch64-v0.1.10) - 2025-06-17
 
 ### Fixed

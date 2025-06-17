@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0](https://github.com/rcore-os/pie-boot/compare/pie-boot-if-v0.2.0...pie-boot-if-v0.3.0) - 2025-06-17
+
+### Added
+
+- enhance memory management with CacheKind and reserve area tracking
+
 ## [0.2.0](https://github.com/rcore-os/pie-boot/compare/pie-boot-if-v0.1.1...pie-boot-if-v0.2.0) - 2025-06-17
 
 ### Other
