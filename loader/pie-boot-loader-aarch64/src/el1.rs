@@ -1,6 +1,9 @@
 use core::arch::asm;
 
-use crate::paging::{PTEGeneric, PhysAddr, TableGeneric, VirtAddr};
+use crate::{
+    mmu::CacheKind,
+    paging::{PTEGeneric, PhysAddr, TableGeneric, VirtAddr},
+};
 use aarch64_cpu::{asm::*, registers::*};
 
 pub fn switch_to_elx(bootargs: usize) {
@@ -197,7 +200,7 @@ impl Pte {
         self.0 |= idx << 2;
     }
 
-    pub fn new(cache: bool) -> Self {
+    pub fn new(cache: CacheKind) -> Self {
         let mut s = Self(
             (PteFlags::empty()
                 | PteFlags::AF
@@ -207,7 +210,10 @@ impl Pte {
                 .bits(),
         );
 
-        s.set_mair_idx(if cache { 1 } else { 3 });
+        s.set_mair_idx(match cache {
+            CacheKind::Device => 0,
+            CacheKind::Normal => 1,
+        });
         s
     }
 }

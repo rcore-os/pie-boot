@@ -5,32 +5,23 @@ use crate::{
 use num_align::{NumAlign, NumAssertAlign};
 
 pub struct LineAllocator {
-    pub start: *mut u8,
-    iter: *mut u8,
-    pub end: *mut u8,
+    start: *mut u8,
 }
 
 impl LineAllocator {
-    pub fn new(start: *mut u8, size: usize) -> Self {
+    pub fn new() -> Self {
         Self {
-            start,
-            iter: start,
-            end: unsafe { start.add(size) },
+            start: rsv_end() as _,
         }
     }
 
     pub fn alloc(&mut self, layout: core::alloc::Layout) -> Option<usize> {
-        let start = self.iter.align_up(layout.align());
-        if start as usize + layout.size() > self.end as usize {
-            return None;
-        }
-        self.iter = unsafe { start.add(layout.size()) };
-
-        Some(start as usize)
+        let ptr = crate::alloc_memory(layout.size(), layout.align());
+        Some(ptr as usize)
     }
 
     fn highest_address(&self) -> usize {
-        self.iter as _
+        rsv_end()
     }
 
     fn used(&self) -> usize {
@@ -63,17 +54,13 @@ impl Access for LineAllocator {
 
 /// `rsv_space` 在 `boot stack` 之后保留的空间到校
 pub fn new_boot_table(args: &EarlyBootArgs) -> PhysAddr {
-    let start = args.kcode_end.align_up(Table::PAGE_SIZE) as *mut u8;
-    let size = GB;
     let kcode_offset = args.kimage_addr_vma as usize - args.kimage_addr_lma as usize;
 
-    let mut alloc = LineAllocator::new(start, size);
+    let mut alloc = LineAllocator::new();
 
     let access = &mut alloc;
 
-    printkv!("BootTable space", "[{:p}, {:#x})", access.start, {
-        access.start as usize + size
-    });
+    printkv!("BootTable space", "[{:p} --)", access.start);
 
     let mut table = early_err!(PageTableRef::<'_, Table>::create_empty(access));
     unsafe {
@@ -86,7 +73,7 @@ pub fn new_boot_table(args: &EarlyBootArgs) -> PhysAddr {
         let code_start_phys = args.kimage_addr_lma.align_down(align) as usize;
 
         let code_start = args.kimage_addr_vma as usize;
-        let code_end: usize = (args.kcode_end as usize + kcode_offset).align_up(align);
+        let code_end: usize = (rsv_end() + kcode_offset).align_up(align);
 
         let size = (code_end - code_start).max(align);
 
@@ -104,7 +91,7 @@ pub fn new_boot_table(args: &EarlyBootArgs) -> PhysAddr {
                 vaddr: code_start.into(),
                 paddr: code_start_phys.into(),
                 size,
-                pte: Pte::new(true),
+                pte: Pte::new(CacheKind::Normal),
                 allow_huge: true,
                 flush: false,
             },
@@ -124,7 +111,7 @@ pub fn new_boot_table(args: &EarlyBootArgs) -> PhysAddr {
                 vaddr: start.into(),
                 paddr: start.into(),
                 size,
-                pte: Pte::new(false),
+                pte: Pte::new(CacheKind::Device),
                 allow_huge: true,
                 flush: false,
             },
@@ -132,11 +119,18 @@ pub fn new_boot_table(args: &EarlyBootArgs) -> PhysAddr {
         ));
     }
 
-    printkv!("Table size", "{:#x}", access.used());
     unsafe {
-        RUTERN.pg_start = table.paddr().raw();
-        RUTERN.pg_end = access.highest_address();
+        let pg = table.paddr().raw();
+        RUTERN.pg_start = pg;
+        printkv!("Table", "{pg:#x}");
     }
-    printkv!("Table end", "{:#x}", access.highest_address());
+    printkv!("Table size", "{:#x}", access.used());
+
     table.paddr()
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CacheKind {
+    Normal,
+    Device,
 }

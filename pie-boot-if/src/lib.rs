@@ -35,8 +35,10 @@ pub struct BootArgs {
     pub kimage_start_vma: usize,
     /// 页表开始物理地址
     pub pg_start: usize,
-    /// 页表结束物理地址
-    pub pg_end: usize,
+    /// 内存保留区域开始物理地址
+    pub rsv_start: usize,
+    /// 内存保留区域结束物理地址
+    pub rsv_end: usize,
 }
 
 impl Debug for BootArgs {
@@ -46,7 +48,8 @@ impl Debug for BootArgs {
             .field("kimage_start_lma", &(self.kimage_start_lma as *mut u8))
             .field("kimage_start_vma", &(self.kimage_start_vma as *mut u8))
             .field("pg_start", &(self.pg_start as *mut u8))
-            .field("pg_end", &(self.pg_end as *mut u8))
+            .field("rsv_start", &(self.rsv_start as *mut u8))
+            .field("rsv_end", &(self.rsv_end as *mut u8))
             .finish()
     }
 }
