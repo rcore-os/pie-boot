@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.9](https://github.com/rcore-os/pie-boot/compare/pie-boot-loader-aarch64-v0.1.8...pie-boot-loader-aarch64-v0.1.9) - 2025-06-17
+
+### Other
+
+- remove unused macros and clean up console module; update BootArgs struct to include kernel image addresses
+
 ## [0.1.8](https://github.com/rcore-os/pie-boot/compare/pie-boot-loader-aarch64-v0.1.7...pie-boot-loader-aarch64-v0.1.8) - 2025-06-15
 
 ### Other
