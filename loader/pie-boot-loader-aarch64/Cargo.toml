@@ -26,7 +26,7 @@ log = "0.4"
 num-align = "0.1"
 page-table-generic = "0.6"
 pie-boot-if = {workspace = true}
-# pie-boot-loader-macros = {workspace = true}
+kasm-aarch64 = {workspace = true}
 thiserror = {version = "2", default-features = false}
 
 [build-dependencies]

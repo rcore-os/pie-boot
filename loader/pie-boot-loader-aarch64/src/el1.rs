@@ -70,10 +70,10 @@ pub fn switch_to_elx(bootargs: usize) {
 fn flush_tlb(vaddr: Option<VirtAddr>) {
     match vaddr {
         Some(addr) => {
-            unsafe { asm!("tlbi vaae1is, {}; dsb nsh; isb", in(reg) addr.raw()) };
+            unsafe { asm!("tlbi vaae1is, {}; dsb sy; isb", in(reg) addr.raw()) };
         }
         None => {
-            unsafe { asm!("tlbi vmalle1is; dsb nsh; isb") };
+            unsafe { asm!("tlbi vmalle1; dsb sy; isb") };
         }
     }
 }
@@ -82,12 +82,12 @@ pub fn set_table(addr: PhysAddr) {
     TTBR1_EL1.set_baddr(addr.raw() as _);
     TTBR0_EL1.set_baddr(addr.raw() as _);
     flush_tlb(None);
-    barrier::isb(barrier::SY);
 }
 
 #[inline(always)]
 pub fn setup_sctlr() {
     SCTLR_EL1.modify(SCTLR_EL1::M::Enable + SCTLR_EL1::C::Cacheable + SCTLR_EL1::I::Cacheable);
+    barrier::dsb(barrier::SY);
     barrier::isb(barrier::SY);
 }
 
@@ -100,8 +100,11 @@ pub fn setup_table_regs() {
     // WriteThrough
     let attr2 = MAIR_EL1::Attr2_Normal_Inner::WriteThrough_Transient_WriteAlloc
         + MAIR_EL1::Attr2_Normal_Outer::WriteThrough_Transient_WriteAlloc;
+    // No cache
+    let attr3 =
+        MAIR_EL1::Attr3_Normal_Inner::NonCacheable + MAIR_EL1::Attr3_Normal_Outer::NonCacheable;
 
-    MAIR_EL1.write(attr0 + attr1 + attr2);
+    MAIR_EL1.write(attr0 + attr1 + attr2 + attr3);
 
     // Enable TTBR0 and TTBR1 walks, page size = 4K, vaddr size = 48 bits, paddr size = 40 bits.
     const VADDR_SIZE: u64 = 48;
@@ -122,7 +125,6 @@ pub fn setup_table_regs() {
     TCR_EL1.write(TCR_EL1::IPS::Bits_48 + tcr_flags0 + tcr_flags1);
 
     flush_tlb(None);
-    barrier::dmb(barrier::ISH);
 }
 
 bitflags::bitflags! {
@@ -195,10 +197,17 @@ impl Pte {
         self.0 |= idx << 2;
     }
 
-    pub fn new() -> Self {
-        let mut s =
-            Self((PteFlags::empty() | PteFlags::AF | PteFlags::VALID | PteFlags::NON_BLOCK).bits());
-        s.set_mair_idx(0);
+    pub fn new(cache: bool) -> Self {
+        let mut s = Self(
+            (PteFlags::empty()
+                | PteFlags::AF
+                | PteFlags::VALID
+                | PteFlags::NON_BLOCK
+                | PteFlags::UXN)
+                .bits(),
+        );
+
+        s.set_mair_idx(if cache { 1 } else { 3 });
         s
     }
 }

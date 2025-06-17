@@ -7,6 +7,7 @@ use core::arch::{asm, naked_asm};
 mod _macros;
 
 mod console;
+mod context;
 #[cfg(feature = "console")]
 mod debug;
 #[cfg(el = "1")]
@@ -17,6 +18,7 @@ mod lang_items;
 mod mmu;
 mod paging;
 mod relocate;
+mod trap;
 
 use aarch64_cpu::{asm::barrier, registers::*};
 #[cfg(el = "1")]
@@ -30,6 +32,7 @@ use pie_boot_if::{BootArgs, EarlyBootArgs};
 static STACK: [u8; 0x8000] = [0; 0x8000];
 
 static mut RUTERN: BootArgs = BootArgs::new();
+static mut OFFSET: usize = 0;
 
 /// The header of the kernel.
 #[unsafe(no_mangle)]
@@ -51,6 +54,10 @@ unsafe extern "C" fn _start(_args: &EarlyBootArgs) -> ! {
         "mov   x8,  x0",
 
         "
+        adrp  x9,  {offset}
+        ldr   x9,  [x9, :lo12:{offset}]
+        add   sp, sp, x9
+
         adrp x0, {res}
         add  x0, x0, :lo12:{res}
         br   x8
@@ -59,6 +66,7 @@ unsafe extern "C" fn _start(_args: &EarlyBootArgs) -> ! {
         stack_size = const STACK.len(),
         switch_to_elx = sym switch_to_elx,
         entry = sym entry,
+        offset = sym OFFSET,
         res = sym RUTERN,
     )
 }
@@ -70,11 +78,14 @@ fn entry(bootargs: &EarlyBootArgs) -> *mut () {
         relocate::apply();
 
         let fdt = bootargs.args[0];
+        OFFSET = bootargs.kimage_addr_vma as usize - bootargs.kimage_addr_lma as usize;
 
         #[cfg(feature = "console")]
         debug::fdt::init_debugcon(fdt as _);
 
         printkv!("fdt", "{fdt:#x}");
+
+        trap::setup();
 
         printkv!("EL", "{}", CurrentEL.read(CurrentEL::EL));
 
@@ -95,7 +106,9 @@ fn entry(bootargs: &EarlyBootArgs) -> *mut () {
         RUTERN.kimage_start_lma = bootargs.kimage_addr_lma as usize;
         RUTERN.kimage_start_vma = bootargs.kimage_addr_vma as usize;
     }
-    bootargs.virt_entry
+    let jump = bootargs.virt_entry;
+    printkv!("jump to", "{:p}", jump);
+    jump
 }
 
 #[inline]

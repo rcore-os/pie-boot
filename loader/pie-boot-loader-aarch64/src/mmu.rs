@@ -43,7 +43,6 @@ pub fn enable_mmu(args: &EarlyBootArgs) {
 
     let addr = new_boot_table(args);
     set_table(addr);
-
     setup_sctlr();
 }
 
@@ -105,7 +104,7 @@ pub fn new_boot_table(args: &EarlyBootArgs) -> PhysAddr {
                 vaddr: code_start.into(),
                 paddr: code_start_phys.into(),
                 size,
-                pte: Pte::new(),
+                pte: Pte::new(true),
                 allow_huge: true,
                 flush: false,
             },
@@ -125,7 +124,7 @@ pub fn new_boot_table(args: &EarlyBootArgs) -> PhysAddr {
                 vaddr: start.into(),
                 paddr: start.into(),
                 size,
-                pte: Pte::new(),
+                pte: Pte::new(false),
                 allow_huge: true,
                 flush: false,
             },
