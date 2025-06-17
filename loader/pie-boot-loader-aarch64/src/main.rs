@@ -92,6 +92,8 @@ fn entry(bootargs: &EarlyBootArgs) -> *mut () {
         enable_mmu(bootargs);
 
         println!("mmu success");
+        RUTERN.kimage_start_lma = bootargs.kimage_addr_lma as usize;
+        RUTERN.kimage_start_vma = bootargs.kimage_addr_vma as usize;
     }
     bootargs.virt_entry
 }

@@ -29,6 +29,10 @@ impl Default for EarlyBootArgs {
 pub struct BootArgs {
     /// 设备树物理地址
     pub fdt: usize,
+    /// 内核镜像物理地址
+    pub kimage_start_lma: usize,
+    /// 内核镜像虚拟地址
+    pub kimage_start_vma: usize,
     /// 页表开始物理地址
     pub pg_start: usize,
     /// 页表结束物理地址
@@ -39,6 +43,8 @@ impl Debug for BootArgs {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.debug_struct("BootArgs")
             .field("fdt", &(self.fdt as *mut u8))
+            .field("kimage_start_lma", &(self.kimage_start_lma as *mut u8))
+            .field("kimage_start_vma", &(self.kimage_start_vma as *mut u8))
             .field("pg_start", &(self.pg_start as *mut u8))
             .field("pg_end", &(self.pg_end as *mut u8))
             .finish()
@@ -48,6 +54,9 @@ impl Debug for BootArgs {
 impl BootArgs {
     pub const fn new() -> Self {
         unsafe { MaybeUninit::zeroed().assume_init() }
+    }
+    pub fn fdt_addr(&self) -> *mut u8 {
+        self.fdt as *mut u8
     }
 }
 
