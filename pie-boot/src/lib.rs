@@ -52,3 +52,7 @@ fn virt_entry(args: &BootInfo) {
         __pie_boot_main(&BOOT_INFO);
     }
 }
+
+pub fn boot_info() -> &'static BootInfo {
+    &BOOT_INFO
+}
