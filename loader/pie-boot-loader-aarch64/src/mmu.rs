@@ -1,33 +1,9 @@
 use crate::{
-    paging::{Access, GB, MB, MapConfig, PageTableRef, PhysAddr, TableGeneric},
+    paging::{GB, MB, MapConfig, PageTableRef, PhysAddr, TableGeneric},
+    ram::Ram,
     *,
 };
 use num_align::{NumAlign, NumAssertAlign};
-
-pub struct LineAllocator {
-    start: *mut u8,
-}
-
-impl LineAllocator {
-    pub fn new() -> Self {
-        Self {
-            start: rsv_end() as _,
-        }
-    }
-
-    pub fn alloc(&mut self, layout: core::alloc::Layout) -> Option<usize> {
-        let ptr = crate::alloc_memory(layout.size(), layout.align());
-        Some(ptr as usize)
-    }
-
-    fn highest_address(&self) -> usize {
-        rsv_end()
-    }
-
-    fn used(&self) -> usize {
-        self.highest_address() - self.start as usize
-    }
-}
 
 pub fn enable_mmu(args: &EarlyBootArgs) {
     setup_table_regs();
@@ -37,30 +13,17 @@ pub fn enable_mmu(args: &EarlyBootArgs) {
     setup_sctlr();
 }
 
-impl Access for LineAllocator {
-    #[inline(always)]
-    unsafe fn alloc(&mut self, layout: core::alloc::Layout) -> Option<PhysAddr> {
-        LineAllocator::alloc(self, layout).map(|p| p.into())
-    }
-
-    #[inline(always)]
-    unsafe fn dealloc(&mut self, _ptr: PhysAddr, _layout: core::alloc::Layout) {}
-
-    #[inline(always)]
-    fn phys_to_mut(&self, phys: PhysAddr) -> *mut u8 {
-        phys.raw() as _
-    }
-}
-
 /// `rsv_space` 在 `boot stack` 之后保留的空间到校
 pub fn new_boot_table(args: &EarlyBootArgs) -> PhysAddr {
     let kcode_offset = args.kimage_addr_vma as usize - args.kimage_addr_lma as usize;
 
-    let mut alloc = LineAllocator::new();
+    let mut alloc = Ram {};
 
     let access = &mut alloc;
 
-    printkv!("BootTable space", "[{:p} --)", access.start);
+    let table_start = access.current();
+
+    printkv!("BootTable space", "[{:p} --)", table_start);
 
     let mut table = early_err!(PageTableRef::<'_, Table>::create_empty(access));
     unsafe {
@@ -73,7 +36,7 @@ pub fn new_boot_table(args: &EarlyBootArgs) -> PhysAddr {
         let code_start_phys = args.kimage_addr_lma.align_down(align) as usize;
 
         let code_start = args.kimage_addr_vma as usize;
-        let code_end: usize = (rsv_end() + kcode_offset).align_up(align);
+        let code_end: usize = (table_start as usize + kcode_offset).align_up(align);
 
         let size = (code_end - code_start).max(align);
 
@@ -124,7 +87,11 @@ pub fn new_boot_table(args: &EarlyBootArgs) -> PhysAddr {
         RUTERN.pg_start = pg;
         printkv!("Table", "{pg:#x}");
     }
-    printkv!("Table size", "{:#x}", access.used());
+    printkv!(
+        "Table size",
+        "{:#x}",
+        access.current() as usize - table_start as usize
+    );
 
     table.paddr()
 }

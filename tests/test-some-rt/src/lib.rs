@@ -4,7 +4,7 @@
 use core::hint::spin_loop;
 
 use log::{debug, info};
-use pie_boot::BootArgs;
+use pie_boot::BootInfo;
 
 use crate::debug::init_log;
 
@@ -14,10 +14,10 @@ mod debug;
 pub mod lang_items;
 
 #[pie_boot::entry]
-fn main(args: &BootArgs) -> ! {
+fn main(args: &BootInfo) -> ! {
     clean_bss();
 
-    init_log(args.fdt as _);
+    init_log(args.fdt.unwrap().as_ptr());
 
     debug!("boot args: {:?}", args);
 

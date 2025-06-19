@@ -6,9 +6,10 @@
 mod arch;
 
 mod loader;
+mod staticcell;
 
-pub use pie_boot_if::BootArgs;
 use pie_boot_if::EarlyBootArgs;
+pub use pie_boot_if::{BootInfo, MemoryRegion, MemoryRegionKind, MemoryRegions};
 pub use pie_boot_macros::entry;
 #[allow(unused)]
 use pie_boot_macros::start_code;
@@ -17,5 +18,11 @@ use pie_boot_macros::start_code;
 static mut BOOT_ARGS: EarlyBootArgs = EarlyBootArgs::new();
 
 unsafe extern "Rust" {
-    fn __pie_boot_main(args: &BootArgs);
+    fn __pie_boot_main(args: &BootInfo);
+}
+
+fn virt_entry(args: &BootInfo) {
+    unsafe {
+        __pie_boot_main(args);
+    }
 }

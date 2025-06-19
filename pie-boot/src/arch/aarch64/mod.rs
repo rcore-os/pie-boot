@@ -85,7 +85,7 @@ fn preserve_boot_args() {
 	b	{dcache_inval_poc}		// tail call
         ",
     boot_args = sym crate::BOOT_ARGS,
-    virt_entry = sym crate::__pie_boot_main,
+    virt_entry = sym crate::virt_entry,
     args_of_entry_vma = const  offset_of!(EarlyBootArgs, virt_entry),
     args_of_kimage_addr_lma = const  offset_of!(EarlyBootArgs, kimage_addr_lma),
     args_of_kimage_addr_vma = const  offset_of!(EarlyBootArgs, kimage_addr_vma),
