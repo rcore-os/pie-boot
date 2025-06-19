@@ -36,7 +36,8 @@ pub fn new_boot_table(args: &EarlyBootArgs) -> PhysAddr {
         let code_start_phys = args.kimage_addr_lma.align_down(align) as usize;
 
         let code_start = args.kimage_addr_vma as usize;
-        let code_end: usize = (table_start as usize + kcode_offset).align_up(align);
+        let mut code_end: usize = (table_start as usize + kcode_offset).align_up(align);
+        code_end = code_end.align_up(512 * MB);
 
         let size = (code_end - code_start).max(align);
 

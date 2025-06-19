@@ -115,11 +115,10 @@ fn entry(bootargs: &EarlyBootArgs) -> *mut () {
         ret.fdt = NonNull::new((fdt + OFFSET) as _);
         ret.cpu_id = MPIDR_EL1.get() as usize & 0xFFFFFF;
 
-        println!("mmu success");
         ret.kimage_start_lma = bootargs.kimage_addr_lma as usize;
         ret.kimage_start_vma = bootargs.kimage_addr_vma as usize;
 
-        ret.memory_regions = ram::memory_regions(ret.fdt).into();
+        ret.memory_regions = ram::memory_regions().into();
     }
     let jump = bootargs.virt_entry;
     printkv!("jump to", "{:p}", jump);
@@ -173,7 +172,7 @@ fn save_fdt(fdt: *mut u8) -> usize {
         let fdt = Fdt::from_ptr(ptr).unwrap();
         let size = fdt.total_size();
 
-        let dst = ram::alloc(size, 64);
+        let dst = ram::alloc_phys(size, 64);
 
         let src = core::slice::from_raw_parts(ptr.as_ptr(), size);
         let dst_slice = core::slice::from_raw_parts_mut(dst, size);

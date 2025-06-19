@@ -1012,6 +1012,7 @@ dependencies = [
  "pie-boot-if",
  "pie-boot-loader-aarch64",
  "pie-boot-macros",
+ "spin",
 ]
 
 [[package]]

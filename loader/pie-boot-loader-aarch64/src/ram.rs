@@ -1,6 +1,9 @@
 use core::{alloc::Layout, cell::UnsafeCell, ptr::NonNull};
 
-use crate::paging::{Access, PhysAddr};
+use crate::{
+    OFFSET,
+    paging::{Access, PhysAddr},
+};
 use fdt_parser::Fdt;
 use num_align::NumAlign;
 use pie_boot_if::{MemoryRegion, MemoryRegionKind};
@@ -71,12 +74,13 @@ pub fn init(kernel_end: usize) {
     }
 }
 
-pub fn alloc(size: usize, align: usize) -> *mut u8 {
-    alloc_with_layout(Layout::from_size_align(size, align).unwrap())
+/// alloc virt addr
+fn alloc_with_layout(layout: Layout) -> *mut u8 {
+    (unsafe { Ram {}.alloc(layout).unwrap() + OFFSET }.raw()) as _
 }
 
-fn alloc_with_layout(layout: Layout) -> *mut u8 {
-    unsafe { Ram {}.alloc(layout).unwrap() }.raw() as _
+pub fn alloc_phys(size: usize, align: usize) -> *mut u8 {
+    unsafe { alloc_with_layout(Layout::from_size_align(size, align).unwrap()).sub(OFFSET) }
 }
 
 fn alloc_region() -> *mut MemoryRegion {
@@ -91,33 +95,8 @@ fn alloc_region() -> *mut MemoryRegion {
     }
 }
 
-pub fn memory_regions(fdt_ptr: Option<NonNull<u8>>) -> &'static mut [MemoryRegion] {
+pub fn memory_regions() -> &'static mut [MemoryRegion] {
     unsafe {
-        if let Some(ptr) = fdt_ptr {
-            let fdt = Fdt::from_ptr(ptr).unwrap();
-            for memory in fdt.memory() {
-                for region in memory.regions() {
-                    let start = region.address as _;
-                    let v = MemoryRegion {
-                        start,
-                        end: start + region.size,
-                        kind: MemoryRegionKind::Ram,
-                    };
-
-                    alloc_region().write(v);
-                }
-            }
-
-            for region in fdt.memory_reservation_block() {
-                let start = region.address as _;
-                let v = MemoryRegion {
-                    start,
-                    end: start + region.size,
-                    kind: MemoryRegionKind::Ram,
-                };
-                alloc_region().write(v);
-            }
-        }
         let ptr = alloc_region();
         let region = MemoryRegion {
             start: (*RAM_ALLOC.0.get()).start,
