@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.12](https://github.com/rcore-os/pie-boot/compare/pie-boot-v0.1.11...pie-boot-v0.1.12) - 2025-06-19
+
+### Other
+
+- More boot info ([#15](https://github.com/rcore-os/pie-boot/pull/15))
+
 ## [0.1.11](https://github.com/rcore-os/pie-boot/compare/pie-boot-v0.1.10...pie-boot-v0.1.11) - 2025-06-17
 
 ### Other

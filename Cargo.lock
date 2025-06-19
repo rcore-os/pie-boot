@@ -1002,7 +1002,7 @@ checksum = "e3148f5046208a5d56bcfc03053e3ca6334e51da8dfb19b6cdc8b306fae3283e"
 
 [[package]]
 name = "pie-boot"
-version = "0.1.11"
+version = "0.1.12"
 dependencies = [
  "bindeps-simple",
  "fdt-parser",
@@ -1017,11 +1017,11 @@ dependencies = [
 
 [[package]]
 name = "pie-boot-if"
-version = "0.3.0"
+version = "0.4.0"
 
 [[package]]
 name = "pie-boot-loader-aarch64"
-version = "0.1.11"
+version = "0.1.12"
 dependencies = [
  "aarch64-cpu",
  "any-uart",
