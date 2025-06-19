@@ -82,11 +82,9 @@ pub fn new_boot_table(args: &EarlyBootArgs) -> PhysAddr {
         ));
     }
 
-    unsafe {
-        let pg = table.paddr().raw();
-        RUTERN.pg_start = pg;
-        printkv!("Table", "{pg:#x}");
-    }
+    let pg = table.paddr().raw();
+    RUTERN.as_mut().pg_start = pg;
+    printkv!("Table", "{pg:#x}");
     printkv!(
         "Table size",
         "{:#x}",

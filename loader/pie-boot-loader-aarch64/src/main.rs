@@ -22,6 +22,7 @@ mod mmu;
 mod paging;
 mod ram;
 mod relocate;
+mod staticcell;
 mod trap;
 
 use aarch64_cpu::{asm::barrier, registers::*};
@@ -32,11 +33,12 @@ use el2::*;
 use fdt_parser::Fdt;
 use mmu::enable_mmu;
 use pie_boot_if::{BootInfo, EarlyBootArgs};
+use staticcell::*;
 
 #[unsafe(link_section = ".stack")]
 static STACK: [u8; 0x8000] = [0; 0x8000];
 
-static mut RUTERN: BootInfo = BootInfo::new();
+static RUTERN: StaticCell<BootInfo> = StaticCell::new(BootInfo::new());
 static mut OFFSET: usize = 0;
 
 /// The header of the kernel.
@@ -108,14 +110,16 @@ fn entry(bootargs: &EarlyBootArgs) -> *mut () {
             loader_at.add(loader_size())
         );
         enable_mmu(bootargs);
-        RUTERN.fdt = NonNull::new((fdt + OFFSET) as _);
-        RUTERN.cpu_id = MPIDR_EL1.get() as usize & 0xFFFFFF;
+        let ret = RUTERN.as_mut();
+
+        ret.fdt = NonNull::new((fdt + OFFSET) as _);
+        ret.cpu_id = MPIDR_EL1.get() as usize & 0xFFFFFF;
 
         println!("mmu success");
-        RUTERN.kimage_start_lma = bootargs.kimage_addr_lma as usize;
-        RUTERN.kimage_start_vma = bootargs.kimage_addr_vma as usize;
+        ret.kimage_start_lma = bootargs.kimage_addr_lma as usize;
+        ret.kimage_start_vma = bootargs.kimage_addr_vma as usize;
 
-        RUTERN.memory_regions = ram::memory_regions(RUTERN.fdt).into();
+        ret.memory_regions = ram::memory_regions(ret.fdt).into();
     }
     let jump = bootargs.virt_entry;
     printkv!("jump to", "{:p}", jump);

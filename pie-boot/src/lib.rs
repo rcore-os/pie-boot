@@ -6,7 +6,6 @@
 mod arch;
 
 mod loader;
-mod staticcell;
 
 use pie_boot_if::EarlyBootArgs;
 pub use pie_boot_if::{BootInfo, MemoryRegion, MemoryRegionKind, MemoryRegions};
