@@ -20,7 +20,9 @@ mod el2;
 mod lang_items;
 mod mmu;
 mod paging;
+mod ram;
 mod relocate;
+mod staticcell;
 mod trap;
 
 use aarch64_cpu::{asm::barrier, registers::*};
@@ -30,15 +32,14 @@ use el1::*;
 use el2::*;
 use fdt_parser::Fdt;
 use mmu::enable_mmu;
-use num_align::NumAlign;
-use pie_boot_if::{BootArgs, EarlyBootArgs};
+use pie_boot_if::{BootInfo, EarlyBootArgs};
+use staticcell::*;
 
 #[unsafe(link_section = ".stack")]
 static STACK: [u8; 0x8000] = [0; 0x8000];
 
-static mut RUTERN: BootArgs = BootArgs::new();
+static RUTERN: StaticCell<BootInfo> = StaticCell::new(BootInfo::new());
 static mut OFFSET: usize = 0;
-static mut RSV_END: usize = 0;
 
 /// The header of the kernel.
 #[unsafe(no_mangle)]
@@ -85,7 +86,7 @@ fn entry(bootargs: &EarlyBootArgs) -> *mut () {
 
         let mut fdt = bootargs.args[0];
         OFFSET = bootargs.kimage_addr_vma as usize - bootargs.kimage_addr_lma as usize;
-        RSV_END = bootargs.kcode_end as usize;
+        ram::init(bootargs.kcode_end as _);
 
         #[cfg(feature = "console")]
         debug::fdt::init_debugcon(fdt as _);
@@ -109,21 +110,19 @@ fn entry(bootargs: &EarlyBootArgs) -> *mut () {
             loader_at.add(loader_size())
         );
         enable_mmu(bootargs);
-        RUTERN.fdt = fdt + OFFSET;
+        let ret = RUTERN.as_mut();
 
-        println!("mmu success");
-        RUTERN.kimage_start_lma = bootargs.kimage_addr_lma as usize;
-        RUTERN.kimage_start_vma = bootargs.kimage_addr_vma as usize;
-        RUTERN.rsv_start = bootargs.kcode_end as usize;
-        RUTERN.rsv_end = RSV_END;
+        ret.fdt = NonNull::new((fdt + OFFSET) as _);
+        ret.cpu_id = MPIDR_EL1.get() as usize & 0xFFFFFF;
+
+        ret.kimage_start_lma = bootargs.kimage_addr_lma as usize;
+        ret.kimage_start_vma = bootargs.kimage_addr_vma as usize;
+
+        ret.memory_regions = ram::memory_regions().into();
     }
     let jump = bootargs.virt_entry;
     printkv!("jump to", "{:p}", jump);
     jump
-}
-
-fn rsv_end() -> usize {
-    unsafe { RSV_END }
 }
 
 #[inline]
@@ -164,15 +163,6 @@ fn loader_at() -> *mut u8 {
     at
 }
 
-fn alloc_memory(size: usize, align: usize) -> *mut u8 {
-    unsafe {
-        let start = RSV_END.align_up(align) as *mut u8;
-        let end = start.add(size);
-        RSV_END = end as usize;
-        start
-    }
-}
-
 fn save_fdt(fdt: *mut u8) -> usize {
     let ptr = match NonNull::new(fdt) {
         Some(v) => v,
@@ -182,7 +172,7 @@ fn save_fdt(fdt: *mut u8) -> usize {
         let fdt = Fdt::from_ptr(ptr).unwrap();
         let size = fdt.total_size();
 
-        let dst = alloc_memory(size, 64);
+        let dst = ram::alloc_phys(size, 64);
 
         let src = core::slice::from_raw_parts(ptr.as_ptr(), size);
         let dst_slice = core::slice::from_raw_parts_mut(dst, size);

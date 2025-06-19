@@ -28,6 +28,7 @@ page-table-generic = "0.6"
 pie-boot-if = {workspace = true}
 kasm-aarch64 = {workspace = true}
 thiserror = {version = "2", default-features = false}
+spin = "0.10"
 
 [build-dependencies]
 kdef-pgtable = {workspace = true}
