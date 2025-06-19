@@ -1,10 +1,9 @@
-use core::{alloc::Layout, cell::UnsafeCell, ptr::NonNull};
+use core::{alloc::Layout, cell::UnsafeCell};
 
 use crate::{
     OFFSET,
     paging::{Access, PhysAddr},
 };
-use fdt_parser::Fdt;
 use num_align::NumAlign;
 use pie_boot_if::{MemoryRegion, MemoryRegionKind};
 

@@ -11,7 +11,7 @@ repository.workspace = true
 publish = false
 
 [dependencies]
-pie-boot = { path = "../../pie-boot", version = "0.1" }
+pie-boot = { path = "../../pie-boot", version = "0.2" }
 log = "0.4"
 any-uart = { version = "0.2" }
 
