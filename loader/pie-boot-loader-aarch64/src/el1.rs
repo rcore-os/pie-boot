@@ -201,19 +201,26 @@ impl Pte {
     }
 
     pub fn new(cache: CacheKind) -> Self {
-        let mut s = Self(
-            (PteFlags::empty()
-                | PteFlags::AF
-                | PteFlags::VALID
-                | PteFlags::NON_BLOCK
-                | PteFlags::UXN)
-                .bits(),
-        );
+        let mut flags = PteFlags::empty()
+            | PteFlags::AF
+            | PteFlags::VALID
+            | PteFlags::NON_BLOCK
+            | PteFlags::UXN;
 
-        s.set_mair_idx(match cache {
+        let idx = match cache {
             CacheKind::Device => 0,
-            CacheKind::Normal => 1,
-        });
+            CacheKind::Normal => {
+                flags |= PteFlags::INNER | PteFlags::SHAREABLE;
+                1
+            }
+            CacheKind::NoCache => {
+                flags |= PteFlags::SHAREABLE;
+                3
+            }
+        };
+
+        let mut s = Self(flags.bits());
+        s.set_mair_idx(idx);
         s
     }
 }

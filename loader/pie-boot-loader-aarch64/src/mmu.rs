@@ -117,4 +117,5 @@ pub fn new_boot_table(args: &EarlyBootArgs) -> PhysAddr {
 pub enum CacheKind {
     Normal,
     Device,
+    NoCache,
 }
