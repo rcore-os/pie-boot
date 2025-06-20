@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.4](https://github.com/rcore-os/pie-boot/compare/pie-boot-v0.2.3...pie-boot-v0.2.4) - 2025-06-20
+
+### Other
+
+- expose KIMAGE_VADDR and KLINER_OFFSET from kdef_pgtable
+
 ## [0.2.3](https://github.com/rcore-os/pie-boot/compare/pie-boot-v0.2.2...pie-boot-v0.2.3) - 2025-06-20
 
 ### Other
