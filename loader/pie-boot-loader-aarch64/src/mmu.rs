@@ -93,7 +93,7 @@ pub fn new_boot_table(args: &EarlyBootArgs) -> PhysAddr {
                 vaddr: start.into(),
                 paddr: start.into(),
                 size,
-                pte: Pte::new(CacheKind::Normal),
+                pte: Pte::new(CacheKind::NoCache),
                 allow_huge: true,
                 flush: false,
             },
