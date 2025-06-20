@@ -29,6 +29,7 @@ pie-boot-if = {workspace = true}
 kasm-aarch64 = {workspace = true}
 thiserror = {version = "2", default-features = false}
 spin = "0.10"
+kdef-pgtable = {workspace = true}
 
 [build-dependencies]
 kdef-pgtable = {workspace = true}

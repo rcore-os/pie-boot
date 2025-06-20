@@ -112,11 +112,11 @@ fn entry(bootargs: &EarlyBootArgs) -> *mut () {
         enable_mmu(bootargs);
         let ret = RUTERN.as_mut();
 
-        ret.fdt = NonNull::new((fdt + OFFSET) as _);
+        ret.fdt = NonNull::new(fdt as _);
         ret.cpu_id = MPIDR_EL1.get() as usize & 0xFFFFFF;
 
-        ret.kimage_start_lma = bootargs.kimage_addr_lma as usize;
-        ret.kimage_start_vma = bootargs.kimage_addr_vma as usize;
+        ret.kimage_start_lma = bootargs.kimage_addr_lma as _;
+        ret.kimage_start_vma = bootargs.kimage_addr_vma as _;
 
         ret.memory_regions = ram::memory_regions().into();
     }

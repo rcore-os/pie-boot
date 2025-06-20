@@ -4,6 +4,12 @@ use any_uart::Sender;
 
 pub mod fdt;
 
+pub static mut REG_BASE: usize = 0;
+
+pub fn reg_base() -> usize {
+    unsafe { REG_BASE }
+}
+
 static UART: UartWapper = UartWapper(UnsafeCell::new(None));
 
 struct UartWapper(UnsafeCell<Option<Sender>>);

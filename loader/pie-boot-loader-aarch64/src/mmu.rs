@@ -3,6 +3,7 @@ use crate::{
     ram::Ram,
     *,
 };
+use kdef_pgtable::KLINER_OFFSET;
 use num_align::{NumAlign, NumAssertAlign};
 
 pub fn enable_mmu(args: &EarlyBootArgs) {
@@ -62,6 +63,23 @@ pub fn new_boot_table(args: &EarlyBootArgs) -> PhysAddr {
             access,
         ));
 
+        if debug::reg_base() > 0 {
+            let paddr = debug::reg_base();
+            let vaddr = paddr + KLINER_OFFSET;
+            printkv!("debug", "{:#x}-> {:#x}", vaddr, paddr);
+            early_err!(table.map(
+                MapConfig {
+                    vaddr: vaddr.into(),
+                    paddr: paddr.into(),
+                    size,
+                    pte: Pte::new(CacheKind::Device),
+                    allow_huge: true,
+                    flush: false,
+                },
+                access,
+            ));
+        }
+
         let size = if table.entry_size() == table.max_block_size() {
             table.entry_size() * (Table::TABLE_LEN / 2)
         } else {
@@ -75,7 +93,7 @@ pub fn new_boot_table(args: &EarlyBootArgs) -> PhysAddr {
                 vaddr: start.into(),
                 paddr: start.into(),
                 size,
-                pte: Pte::new(CacheKind::Device),
+                pte: Pte::new(CacheKind::Normal),
                 allow_huge: true,
                 flush: false,
             },
@@ -83,9 +101,9 @@ pub fn new_boot_table(args: &EarlyBootArgs) -> PhysAddr {
         ));
     }
 
-    let pg = table.paddr().raw();
+    let pg = table.paddr().raw() as _;
     RUTERN.as_mut().pg_start = pg;
-    printkv!("Table", "{pg:#x}");
+    printkv!("Table", "{pg:#p}");
     printkv!(
         "Table size",
         "{:#x}",

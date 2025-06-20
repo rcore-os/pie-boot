@@ -29,33 +29,20 @@ impl Default for EarlyBootArgs {
 }
 
 #[repr(align(64))]
-#[derive(Clone)]
+#[derive(Debug, Clone)]
 pub struct BootInfo {
     /// CPU 硬件ID
     pub cpu_id: usize,
     /// 内核镜像物理地址
-    pub kimage_start_lma: usize,
+    pub kimage_start_lma: *mut u8,
     /// 内核镜像虚拟地址
-    pub kimage_start_vma: usize,
-    /// 设备树虚拟地址
+    pub kimage_start_vma: *mut u8,
+    /// 设备树物理地址
     pub fdt: Option<NonNull<u8>>,
     /// 页表开始物理地址
-    pub pg_start: usize,
+    pub pg_start: *mut u8,
     /// 内存区域
     pub memory_regions: MemoryRegions,
-}
-
-impl Debug for BootInfo {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        f.debug_struct("BootInfo")
-            .field("cpu_id", &self.cpu_id)
-            .field("fdt", &self.fdt)
-            .field("kimage_start_lma", &(self.kimage_start_lma as *mut u8))
-            .field("kimage_start_vma", &(self.kimage_start_vma as *mut u8))
-            .field("pg_start", &(self.pg_start as *mut u8))
-            .field("memory_regions", &self.memory_regions)
-            .finish()
-    }
 }
 
 unsafe impl Send for BootInfo {}
