@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.14](https://github.com/rcore-os/pie-boot/compare/pie-boot-loader-aarch64-v0.1.13...pie-boot-loader-aarch64-v0.1.14) - 2025-06-20
+
+### Added
+
+- enhance Pte creation with cache handling and add NoCache variant to CacheKind
+
+### Fixed
+
+- change PTE cache kind to NoCache in new_boot_table function
+
 ## [0.1.13](https://github.com/rcore-os/pie-boot/compare/pie-boot-loader-aarch64-v0.1.12...pie-boot-loader-aarch64-v0.1.13) - 2025-06-20
 
 ### Added
