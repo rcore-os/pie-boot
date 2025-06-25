@@ -1,10 +1,8 @@
 use core::ptr::NonNull;
 
 use fdt_parser::Fdt;
-use kdef_pgtable::PAGE_SIZE;
-use num_align::NumAlign;
 
-use crate::debug::{REG_BASE, setup_debugcon};
+use crate::debug::setup_debugcon;
 
 pub fn init_debugcon(fdt: *mut u8) -> Option<()> {
     fn phys_to_virt(p: usize) -> *mut u8 {

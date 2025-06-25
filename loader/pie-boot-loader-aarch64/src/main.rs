@@ -111,7 +111,7 @@ fn entry(bootargs: &EarlyBootArgs) -> *mut () {
             loader_at,
             loader_at.add(loader_size())
         );
-        enable_mmu(bootargs);
+        enable_mmu(bootargs, fdt);
         let ret = RETURN.as_mut();
 
         ret.fdt = NonNull::new(fdt as _);

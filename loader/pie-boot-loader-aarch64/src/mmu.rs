@@ -5,17 +5,18 @@ use crate::{
 };
 use kdef_pgtable::KLINER_OFFSET;
 use num_align::{NumAlign, NumAssertAlign};
+use page_table_generic::Access;
 
-pub fn enable_mmu(args: &EarlyBootArgs) {
+pub fn enable_mmu(args: &EarlyBootArgs, fdt: usize) {
     setup_table_regs();
 
-    let addr = new_boot_table(args);
+    let addr = new_boot_table(args, fdt);
     set_table(addr);
     setup_sctlr();
 }
 
 /// `rsv_space` 在 `boot stack` 之后保留的空间到校
-pub fn new_boot_table(args: &EarlyBootArgs) -> PhysAddr {
+pub fn new_boot_table(args: &EarlyBootArgs, fdt: usize) -> PhysAddr {
     let kcode_offset = args.kimage_addr_vma as usize - args.kimage_addr_lma as usize;
 
     let mut alloc = Ram {};
@@ -62,6 +63,8 @@ pub fn new_boot_table(args: &EarlyBootArgs) -> PhysAddr {
             },
             access,
         ));
+
+        early_err!(add_rams(fdt, &mut table, access));
 
         if debug::reg_base() > 0 {
             let paddr = debug::reg_base();
@@ -118,4 +121,39 @@ pub enum CacheKind {
     Normal,
     Device,
     NoCache,
+}
+
+fn add_rams(
+    fdt: usize,
+    table: &mut PageTableRef<'_, Table>,
+    access: &mut impl Access,
+) -> Result<(), &'static str> {
+    let fdt = match NonNull::new(fdt as _) {
+        Some(v) => v,
+        _ => {
+            return Err("Invalid FDT pointer");
+        }
+    };
+
+    let fdt: Fdt<'static> = Fdt::from_ptr(fdt).map_err(|_| "Invalid FDT pointer")?;
+    for memory in fdt.memory().flat_map(|mem| mem.regions()) {
+        let paddr = memory.address as usize;
+        let vaddr = paddr + KLINER_OFFSET;
+        printkv!("ram", "{:#x}-> {:#x}", vaddr, paddr);
+        unsafe {
+            early_err!(table.map(
+                MapConfig {
+                    vaddr: vaddr.into(),
+                    paddr: paddr.into(),
+                    size: memory.size,
+                    pte: Pte::new(CacheKind::Normal),
+                    allow_huge: true,
+                    flush: false,
+                },
+                access,
+            ));
+        }
+    }
+
+    Ok(())
 }
