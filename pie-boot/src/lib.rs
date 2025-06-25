@@ -43,11 +43,13 @@ fn virt_entry(args: &BootInfo) {
             fdt::setup(ptr);
         }
 
+        if let Some(r) = mainmem_start_rsv(args) {
+            let _ = MEMORY_REGIONS.as_mut().push(r);
+        }
         let regions = core::slice::from_raw_parts_mut(
             MEMORY_REGIONS.as_mut().as_mut_ptr(),
             MEMORY_REGIONS.len(),
         );
-
         BOOT_INFO.as_mut().memory_regions = regions.into();
 
         __pie_boot_main(&BOOT_INFO);
@@ -56,4 +58,26 @@ fn virt_entry(args: &BootInfo) {
 
 pub fn boot_info() -> &'static BootInfo {
     &BOOT_INFO
+}
+
+fn mainmem_start_rsv(args: &BootInfo) -> Option<MemoryRegion> {
+    let lma = args.kimage_start_lma as usize;
+
+    let mainmem = MEMORY_REGIONS.iter().find(|r| {
+        let is_ram = matches!(r.kind, MemoryRegionKind::Ram);
+        let in_range = r.start <= lma && r.end > lma;
+        is_ram && in_range
+    })?;
+
+    let start = mainmem.start;
+    unsafe extern "C" {
+        fn _idmap_text_end();
+    }
+    let end = _idmap_text_end as usize - args.kcode_offset();
+
+    Some(MemoryRegion {
+        kind: MemoryRegionKind::Reserved,
+        start,
+        end,
+    })
 }

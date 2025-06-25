@@ -102,7 +102,7 @@ pub fn new_boot_table(args: &EarlyBootArgs) -> PhysAddr {
     }
 
     let pg = table.paddr().raw() as _;
-    RUTERN.as_mut().pg_start = pg;
+    RETURN.as_mut().pg_start = pg;
     printkv!("Table", "{pg:#p}");
     printkv!(
         "Table size",

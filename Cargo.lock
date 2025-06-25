@@ -1017,6 +1017,9 @@ dependencies = [
 [[package]]
 name = "pie-boot-if"
 version = "0.4.1"
+dependencies = [
+ "heapless",
+]
 
 [[package]]
 name = "pie-boot-loader-aarch64"

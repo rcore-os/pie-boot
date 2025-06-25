@@ -32,13 +32,15 @@ use el1::*;
 use el2::*;
 use fdt_parser::Fdt;
 use mmu::enable_mmu;
-use pie_boot_if::{BootInfo, EarlyBootArgs};
+use pie_boot_if::EarlyBootArgs;
 use staticcell::*;
+
+pub use pie_boot_if::{BootInfo, DebugConsole, String, Vec};
 
 #[unsafe(link_section = ".stack")]
 static STACK: [u8; 0x8000] = [0; 0x8000];
 
-static RUTERN: StaticCell<BootInfo> = StaticCell::new(BootInfo::new());
+pub(crate) static RETURN: StaticCell<BootInfo> = StaticCell::new(BootInfo::new());
 static mut OFFSET: usize = 0;
 
 /// The header of the kernel.
@@ -74,7 +76,7 @@ unsafe extern "C" fn _start(_args: &EarlyBootArgs) -> ! {
         switch_to_elx = sym switch_to_elx,
         entry = sym entry,
         offset = sym OFFSET,
-        res = sym RUTERN,
+        res = sym RETURN,
     )
 }
 
@@ -110,7 +112,7 @@ fn entry(bootargs: &EarlyBootArgs) -> *mut () {
             loader_at.add(loader_size())
         );
         enable_mmu(bootargs);
-        let ret = RUTERN.as_mut();
+        let ret = RETURN.as_mut();
 
         ret.fdt = NonNull::new(fdt as _);
         ret.cpu_id = MPIDR_EL1.get() as usize & 0xFFFFFF;

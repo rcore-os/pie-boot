@@ -9,6 +9,8 @@ SECTIONS{
     .idmap.text : ALIGN(64){
         _idmap_text = .;
         KEEP(*(.idmap.text))
+        . = ALIGN(PAGE_SIZE);
+        _idmap_text_end = .;
     }
 }
 
