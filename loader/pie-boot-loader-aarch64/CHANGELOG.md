@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.16](https://github.com/rcore-os/pie-boot/compare/pie-boot-loader-aarch64-v0.1.15...pie-boot-loader-aarch64-v0.1.16) - 2025-06-25
+
+### Added
+
+- enhance enable_mmu and new_boot_table functions to accept FDT pointer
+
 ## [0.1.15](https://github.com/rcore-os/pie-boot/compare/pie-boot-loader-aarch64-v0.1.14...pie-boot-loader-aarch64-v0.1.15) - 2025-06-25
 
 ### Added
