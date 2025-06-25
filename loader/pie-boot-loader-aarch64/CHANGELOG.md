@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.15](https://github.com/rcore-os/pie-boot/compare/pie-boot-loader-aarch64-v0.1.14...pie-boot-loader-aarch64-v0.1.15) - 2025-06-25
+
+### Added
+
+- add setup_debugcon function and enhance BootInfo structure with debug console support
+
 ## [0.1.14](https://github.com/rcore-os/pie-boot/compare/pie-boot-loader-aarch64-v0.1.13...pie-boot-loader-aarch64-v0.1.14) - 2025-06-20
 
 ### Added
