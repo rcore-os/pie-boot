@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.6](https://github.com/rcore-os/pie-boot/compare/pie-boot-v0.2.5...pie-boot-v0.2.6) - 2025-06-25
+
+### Added
+
+- add setup_debugcon function and enhance BootInfo structure with debug console support
+
 ## [0.2.5](https://github.com/rcore-os/pie-boot/compare/pie-boot-v0.2.4...pie-boot-v0.2.5) - 2025-06-20
 
 ### Other
