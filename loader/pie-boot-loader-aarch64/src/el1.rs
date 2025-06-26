@@ -73,7 +73,10 @@ pub fn switch_to_elx(bootargs: usize) {
 fn flush_tlb(vaddr: Option<VirtAddr>) {
     match vaddr {
         Some(addr) => {
-            unsafe { asm!("tlbi vaae1is, {}; dsb sy; isb", in(reg) addr.raw()) };
+            const VA_MASK: usize = (1 << 44) - 1; // VA[55:12] => bits[43:0]Add commentMore actions
+            unsafe {
+                asm!("tlbi vaae1is, {}; dsb sy; isb", in(reg) ((addr.raw() >> 12) & VA_MASK))
+            };
         }
         None => {
             unsafe { asm!("tlbi vmalle1; dsb sy; isb") };
