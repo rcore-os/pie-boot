@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.17](https://github.com/rcore-os/pie-boot/compare/pie-boot-loader-aarch64-v0.1.16...pie-boot-loader-aarch64-v0.1.17) - 2025-06-26
+
+### Added
+
+- optimize flush_tlb function to mask virtual address bits for improved TLB flush operation
+
 ## [0.1.16](https://github.com/rcore-os/pie-boot/compare/pie-boot-loader-aarch64-v0.1.15...pie-boot-loader-aarch64-v0.1.16) - 2025-06-25
 
 ### Added
