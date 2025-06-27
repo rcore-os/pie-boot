@@ -7,7 +7,7 @@ keywords.workspace = true
 license.workspace = true
 name = "pie-boot"
 repository.workspace = true
-version = "0.2.8"
+version = "0.2.9"
 
 [features]
 hv = []
