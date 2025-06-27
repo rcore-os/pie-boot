@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.9](https://github.com/rcore-os/pie-boot/compare/pie-boot-v0.2.8...pie-boot-v0.2.9) - 2025-06-27
+
+### Added
+
+- update memory region handling to correctly classify regions as Reserved
+
+### Other
+
+- Merge branch 'master' of github.com:rcore-os/pie-boot
+
 ## [0.2.8](https://github.com/rcore-os/pie-boot/compare/pie-boot-v0.2.7...pie-boot-v0.2.8) - 2025-06-26
 
 ### Other
