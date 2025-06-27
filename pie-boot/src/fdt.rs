@@ -25,9 +25,23 @@ pub fn setup(ptr: NonNull<u8>) -> Option<()> {
         let v = MemoryRegion {
             start,
             end: start + region.size,
-            kind: MemoryRegionKind::Ram,
+            kind: MemoryRegionKind::Reserved,
         };
         MEMORY_REGIONS.as_mut().push(v).ok()?;
+    }
+
+    for node in fdt.reserved_memory() {
+        if let Some(region) = node.reg().and_then(|mut r| r.next())
+            && let Some(size) = region.size
+        {
+            let start = region.address as _;
+            let v = MemoryRegion {
+                start,
+                end: start + size,
+                kind: MemoryRegionKind::Reserved,
+            };
+            MEMORY_REGIONS.as_mut().push(v).ok()?;
+        }
     }
 
     Some(())
