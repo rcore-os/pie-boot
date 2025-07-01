@@ -137,6 +137,9 @@ fn add_rams(
 
     let fdt: Fdt<'static> = Fdt::from_ptr(fdt).map_err(|_| "Invalid FDT pointer")?;
     for memory in fdt.memory().flat_map(|mem| mem.regions()) {
+        if memory.size == 0 {
+            continue; // Skip zero-sized regions
+        }
         let paddr = memory.address as usize;
         let vaddr = paddr + KLINER_OFFSET;
         printkv!("ram", "{:#x}-> {:#x}", vaddr, paddr);

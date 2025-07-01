@@ -10,6 +10,9 @@ pub fn setup(ptr: NonNull<u8>) -> Option<()> {
     for memory in fdt.memory() {
         for region in memory.regions() {
             let start = region.address as _;
+            if region.size == 0 {
+                continue; // Skip zero-sized regions
+            }
             let v = MemoryRegion {
                 start,
                 end: start + region.size,
