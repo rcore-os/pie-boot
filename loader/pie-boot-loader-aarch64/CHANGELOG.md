@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.19](https://github.com/rcore-os/pie-boot/compare/pie-boot-loader-aarch64-v0.1.18...pie-boot-loader-aarch64-v0.1.19) - 2025-07-02
+
+### Added
+
+- *(cache)* add cache management functions and integrate dcache_all in entry
+
+### Other
+
+- Merge branch 'master' of github.com:rcore-os/pie-boot
+
 ## [0.1.18](https://github.com/rcore-os/pie-boot/compare/pie-boot-loader-aarch64-v0.1.17...pie-boot-loader-aarch64-v0.1.18) - 2025-07-01
 
 ### Added
