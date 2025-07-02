@@ -9,6 +9,7 @@ use core::{
 #[macro_use]
 mod _macros;
 
+mod cache;
 mod console;
 mod context;
 #[cfg(feature = "console")]
@@ -85,6 +86,7 @@ fn entry(bootargs: &EarlyBootArgs) -> *mut () {
     unsafe {
         clean_bss();
         relocate::apply();
+        cache::dcache_all(cache::DcacheOp::CleanAndInvalidate);
 
         let mut fdt = bootargs.args[0];
         OFFSET = bootargs.kimage_addr_vma as usize - bootargs.kimage_addr_lma as usize;
@@ -96,6 +98,9 @@ fn entry(bootargs: &EarlyBootArgs) -> *mut () {
         printkv!("fdt", "{fdt:#x}");
 
         trap::setup();
+
+        asm!("msr daifset, #2");
+        CNTP_CTL_EL0.modify(CNTP_CTL_EL0::IMASK::SET);
 
         fdt = save_fdt(fdt as _);
 
