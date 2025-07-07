@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.20](https://github.com/rcore-os/pie-boot/compare/pie-boot-loader-aarch64-v0.1.19...pie-boot-loader-aarch64-v0.1.20) - 2025-07-07
+
+### Added
+
+- add free_memory_start to BootInfo and implement current memory retrieval
+
 ## [0.1.19](https://github.com/rcore-os/pie-boot/compare/pie-boot-loader-aarch64-v0.1.18...pie-boot-loader-aarch64-v0.1.19) - 2025-07-02
 
 ### Added
