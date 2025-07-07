@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.21](https://github.com/rcore-os/pie-boot/compare/pie-boot-loader-aarch64-v0.1.20...pie-boot-loader-aarch64-v0.1.21) - 2025-07-07
+
+### Added
+
+- add aarch64-cpu-ext dependency and update memory management functions
+
+### Other
+
+- Merge branch 'master' of github.com:rcore-os/pie-boot
+
 ## [0.1.20](https://github.com/rcore-os/pie-boot/compare/pie-boot-loader-aarch64-v0.1.19...pie-boot-loader-aarch64-v0.1.20) - 2025-07-07
 
 ### Added
