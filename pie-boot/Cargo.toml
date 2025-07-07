@@ -7,7 +7,7 @@ keywords.workspace = true
 license.workspace = true
 name = "pie-boot"
 repository.workspace = true
-version = "0.2.13"
+version = "0.2.14"
 
 [features]
 hv = []
@@ -21,7 +21,7 @@ pie-boot-macros = {workspace = true}
 
 [target.'cfg(target_arch = "aarch64")'.dependencies]
 kasm-aarch64 = {workspace = true}
-pie-boot-loader-aarch64 = {path = "../loader/pie-boot-loader-aarch64", version = "0.1.19" }
+pie-boot-loader-aarch64 = {path = "../loader/pie-boot-loader-aarch64", version = "0.1.20" }
 
 [build-dependencies]
 bindeps-simple = {version = "0.2"}
