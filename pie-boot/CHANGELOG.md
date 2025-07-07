@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.13](https://github.com/rcore-os/pie-boot/compare/pie-boot-v0.2.12...pie-boot-v0.2.13) - 2025-07-07
+
+### Fixed
+
+- update function reference for memory region end calculation
+
+### Other
+
+- Merge branch 'master' of github.com:rcore-os/pie-boot
+
 ## [0.2.12](https://github.com/rcore-os/pie-boot/compare/pie-boot-v0.2.11...pie-boot-v0.2.12) - 2025-07-02
 
 ### Other
