@@ -73,9 +73,9 @@ fn mainmem_start_rsv(args: &BootInfo) {
 
     let mut start = mainmem.start;
     unsafe extern "C" {
-        fn _idmap_text_end();
+        fn _text();
     }
-    let mut end = _idmap_text_end as usize - args.kcode_offset();
+    let mut end = _text as usize - args.kcode_offset();
 
     // 收集需要移除的 reserved 区域的索引
     let mut indices_to_remove: heapless::Vec<usize, 16> = heapless::Vec::new();
