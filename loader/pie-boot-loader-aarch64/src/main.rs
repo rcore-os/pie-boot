@@ -126,6 +126,7 @@ fn entry(bootargs: &EarlyBootArgs) -> *mut () {
         ret.kimage_start_vma = bootargs.kimage_addr_vma as _;
 
         ret.memory_regions = ram::memory_regions().into();
+        ret.free_memory_start = ram::current();
     }
     let jump = bootargs.virt_entry;
     printkv!("jump to", "{:p}", jump);

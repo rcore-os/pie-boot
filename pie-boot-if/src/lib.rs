@@ -46,6 +46,8 @@ pub struct BootInfo {
     pub memory_regions: MemoryRegions,
     /// 调试串口地址
     pub debug_console: Option<DebugConsole>,
+    /// 可用内存起始地址
+    pub free_memory_start: *mut u8,
 }
 
 unsafe impl Send for BootInfo {}

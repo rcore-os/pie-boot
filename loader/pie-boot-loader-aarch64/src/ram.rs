@@ -108,3 +108,7 @@ pub fn memory_regions() -> &'static mut [MemoryRegion] {
         core::slice::from_raw_parts_mut(MEMORY_REGIONS_PTR, MEMORY_REGIONS_LEN)
     }
 }
+
+pub fn current() -> *mut u8 {
+    Ram {}.current() as _
+}
