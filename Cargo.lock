@@ -12,6 +12,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "aarch64-cpu-ext"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f2a64358f36fba7d684ef367d38a17f6bd2316b97f0a2ad9eb3fe8cacbaed50a"
+dependencies = [
+ "aarch64-cpu",
+ "tock-registers",
+]
+
+[[package]]
 name = "abi-singleton"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1026,6 +1036,7 @@ name = "pie-boot-loader-aarch64"
 version = "0.1.19"
 dependencies = [
  "aarch64-cpu",
+ "aarch64-cpu-ext",
  "any-uart",
  "bitflags",
  "fdt-parser",

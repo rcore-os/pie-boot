@@ -5,6 +5,7 @@ use crate::{
     paging::{PTEGeneric, PhysAddr, TableGeneric, VirtAddr},
 };
 use aarch64_cpu::{asm::*, registers::*};
+use aarch64_cpu_ext::asm::tlb::{VAAE1IS, VMALLE1, tlbi};
 
 pub fn switch_to_elx(bootargs: usize) {
     SPSel.write(SPSel::SP::ELx);
@@ -73,15 +74,14 @@ pub fn switch_to_elx(bootargs: usize) {
 fn flush_tlb(vaddr: Option<VirtAddr>) {
     match vaddr {
         Some(addr) => {
-            const VA_MASK: usize = (1 << 44) - 1; // VA[55:12] => bits[43:0]Add commentMore actions
-            unsafe {
-                asm!("tlbi vaae1is, {}; dsb sy; isb", in(reg) ((addr.raw() >> 12) & VA_MASK))
-            };
+            tlbi(VAAE1IS::new(addr.raw()));
         }
         None => {
-            unsafe { asm!("tlbi vmalle1; dsb sy; isb") };
+            tlbi(VMALLE1);
         }
     }
+    barrier::dsb(barrier::SY);
+    barrier::isb(barrier::SY);
 }
 
 pub fn set_table(addr: PhysAddr) {
@@ -98,17 +98,17 @@ pub fn setup_sctlr() {
 }
 
 pub fn setup_table_regs() {
-    // Device-nGnRnE
-    let attr0 = MAIR_EL1::Attr0_Device::nonGathering_nonReordering_noEarlyWriteAck;
+    // Device-nGnRE
+    let attr0 = MAIR_EL1::Attr0_Device::nonGathering_nonReordering_EarlyWriteAck;
     // Normal
     let attr1 = MAIR_EL1::Attr1_Normal_Inner::WriteBack_NonTransient_ReadWriteAlloc
         + MAIR_EL1::Attr1_Normal_Outer::WriteBack_NonTransient_ReadWriteAlloc;
-    // WriteThrough
-    let attr2 = MAIR_EL1::Attr2_Normal_Inner::WriteThrough_Transient_WriteAlloc
-        + MAIR_EL1::Attr2_Normal_Outer::WriteThrough_Transient_WriteAlloc;
     // No cache
-    let attr3 =
+    let attr2 =
         MAIR_EL1::Attr3_Normal_Inner::NonCacheable + MAIR_EL1::Attr3_Normal_Outer::NonCacheable;
+    // WriteThrough
+    let attr3 = MAIR_EL1::Attr2_Normal_Inner::WriteThrough_Transient_WriteAlloc
+        + MAIR_EL1::Attr2_Normal_Outer::WriteThrough_Transient_WriteAlloc;
 
     MAIR_EL1.write(attr0 + attr1 + attr2 + attr3);
 
@@ -218,7 +218,7 @@ impl Pte {
             }
             CacheKind::NoCache => {
                 flags |= PteFlags::SHAREABLE;
-                3
+                2
             }
         };
 
