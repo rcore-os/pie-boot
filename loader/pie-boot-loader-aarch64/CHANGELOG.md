@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.22](https://github.com/rcore-os/pie-boot/compare/pie-boot-loader-aarch64-v0.1.21...pie-boot-loader-aarch64-v0.1.22) - 2025-07-07
+
+### Fixed
+
+- correct memory attribute flags in setup_table_regs function
+
+### Other
+
+- Merge branch 'master' of github.com:rcore-os/pie-boot
+
 ## [0.1.21](https://github.com/rcore-os/pie-boot/compare/pie-boot-loader-aarch64-v0.1.20...pie-boot-loader-aarch64-v0.1.21) - 2025-07-07
 
 ### Added
