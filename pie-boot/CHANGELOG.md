@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.15](https://github.com/rcore-os/pie-boot/compare/pie-boot-v0.2.14...pie-boot-v0.2.15) - 2025-07-07
+
+### Other
+
+- updated the following local packages: pie-boot-loader-aarch64
+
 ## [0.2.14](https://github.com/rcore-os/pie-boot/compare/pie-boot-v0.2.13...pie-boot-v0.2.14) - 2025-07-07
 
 ### Other
