@@ -105,10 +105,10 @@ pub fn setup_table_regs() {
         + MAIR_EL1::Attr1_Normal_Outer::WriteBack_NonTransient_ReadWriteAlloc;
     // No cache
     let attr2 =
-        MAIR_EL1::Attr3_Normal_Inner::NonCacheable + MAIR_EL1::Attr3_Normal_Outer::NonCacheable;
+        MAIR_EL1::Attr2_Normal_Inner::NonCacheable + MAIR_EL1::Attr2_Normal_Outer::NonCacheable;
     // WriteThrough
-    let attr3 = MAIR_EL1::Attr2_Normal_Inner::WriteThrough_Transient_WriteAlloc
-        + MAIR_EL1::Attr2_Normal_Outer::WriteThrough_Transient_WriteAlloc;
+    let attr3 = MAIR_EL1::Attr3_Normal_Inner::WriteThrough_Transient_WriteAlloc
+        + MAIR_EL1::Attr3_Normal_Outer::WriteThrough_Transient_WriteAlloc;
 
     MAIR_EL1.write(attr0 + attr1 + attr2 + attr3);
 
