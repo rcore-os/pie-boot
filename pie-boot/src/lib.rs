@@ -138,3 +138,6 @@ fn mainmem_start_rsv(args: &BootInfo) {
         end,
     });
 }
+
+#[unsafe(no_mangle)]
+unsafe extern "C" fn __pie_boot_default_secondary(_cpu_id: usize) {}

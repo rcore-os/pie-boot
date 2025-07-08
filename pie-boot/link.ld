@@ -1,6 +1,10 @@
 . = {kimage_vaddr};
 PAGE_SIZE = {page_size};
 
+EXTERN(__pie_boot_default_secondary);
+
+PROVIDE(__pie_boot_secondary = __pie_boot_default_secondary);
+
 SECTIONS{
     .head.text : {
         _text = .;
