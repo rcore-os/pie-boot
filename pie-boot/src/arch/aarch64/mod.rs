@@ -23,6 +23,7 @@ macro_rules! sym_lma {
     }};
 }
 
+#[cfg_attr(feature = "hv", path = "el2.rs")]
 #[cfg_attr(not(feature = "hv"), path = "el1.rs")]
 mod el;
 

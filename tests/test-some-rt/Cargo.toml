@@ -11,6 +11,7 @@ repository.workspace = true
 version.workspace = true
 
 [features]
+hv = ["pie-boot/hv"]
 qemu = ["qemu-exit"]
 
 [dependencies]
