@@ -5,7 +5,8 @@ macro_rules! sym_lma {
         unsafe{
             let out: usize;
             core::arch::asm!(
-                "adr {r}, {s}",
+                "adrp {r}, {s}",
+                "add  {r}, {r}, :lo12:{s}",
                 r = out(reg) out,
                 s = sym $sym,
             );

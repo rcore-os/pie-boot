@@ -1014,6 +1014,8 @@ checksum = "e3148f5046208a5d56bcfc03053e3ca6334e51da8dfb19b6cdc8b306fae3283e"
 name = "pie-boot"
 version = "0.2.16"
 dependencies = [
+ "aarch64-cpu",
+ "aarch64-cpu-ext",
  "bindeps-simple",
  "fdt-parser",
  "heapless",

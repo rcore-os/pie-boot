@@ -13,9 +13,9 @@ use heapless::Vec;
 pub use kdef_pgtable::{KIMAGE_VADDR, KLINER_OFFSET};
 use pie_boot_if::EarlyBootArgs;
 pub use pie_boot_if::{BootInfo, MemoryRegion, MemoryRegionKind, MemoryRegions};
-pub use pie_boot_macros::entry;
 #[allow(unused)]
 use pie_boot_macros::start_code;
+pub use pie_boot_macros::{entry, secondary_entry};
 use staticcell::StaticCell;
 
 #[allow(unused)]
@@ -25,6 +25,8 @@ static mut BOOT_ARGS: EarlyBootArgs = EarlyBootArgs::new();
 static BOOT_INFO: StaticCell<BootInfo> = StaticCell::new(BootInfo::new());
 #[unsafe(link_section = ".data")]
 static MEMORY_REGIONS: StaticCell<Vec<MemoryRegion, 128>> = StaticCell::new(Vec::new());
+#[unsafe(link_section = ".data")]
+static mut BOOT_PT: usize = 0;
 
 unsafe extern "Rust" {
     fn __pie_boot_main(args: &BootInfo);
@@ -49,6 +51,7 @@ fn virt_entry(args: &BootInfo) {
             MEMORY_REGIONS.len(),
         );
         BOOT_INFO.as_mut().memory_regions = regions.into();
+        BOOT_PT = BOOT_INFO.pg_start as usize;
 
         __pie_boot_main(&BOOT_INFO);
     }
@@ -56,6 +59,13 @@ fn virt_entry(args: &BootInfo) {
 
 pub fn boot_info() -> &'static BootInfo {
     &BOOT_INFO
+}
+
+/// secondary entry address
+/// arg0 is stack top
+pub fn secondary_entry_addr() -> usize {
+    let ptr = arch::_start_secondary as usize;
+    ptr - boot_info().kcode_offset()
 }
 
 fn mainmem_start_rsv(args: &BootInfo) {

@@ -1,10 +1,33 @@
 use core::{arch::naked_asm, mem::offset_of};
 
+use aarch64_cpu_ext::cache::{CacheOp, dcache_all};
+use pie_boot_loader_aarch64::{set_table, setup_sctlr, setup_table_regs};
+
 def_adr_l!();
 
 mod cache;
 
-use crate::start_code;
+macro_rules! sym_lma {
+    ($sym:expr) => {{
+        #[allow(unused_unsafe)]
+        unsafe{
+            let out: usize;
+            core::arch::asm!(
+                "adrp {r}, {s}",
+                "add  {r}, {r}, :lo12:{s}",
+                r = out(reg) out,
+                s = sym $sym,
+            );
+            out
+        }
+    }};
+}
+
+#[cfg_attr(not(feature = "hv"), path = "el1.rs")]
+mod el;
+
+use crate::{BOOT_PT, boot_info, start_code};
+use aarch64_cpu::{asm::barrier, registers::*};
 use kasm_aarch64::{self as kasm, def_adr_l};
 use pie_boot_if::EarlyBootArgs;
 
@@ -93,4 +116,44 @@ fn preserve_boot_args() {
     dcache_inval_poc = sym cache::__dcache_inval_poc,
     boot_arg_size = const size_of::<EarlyBootArgs>()
     )
+}
+
+#[start_code(naked)]
+pub fn _start_secondary(_stack_top: usize) -> ! {
+    naked_asm!(
+        "
+        mrs     x19, mpidr_el1
+        and     x19, x19, #0xffffff     // get current CPU id
+
+        mov     sp, x0
+        bl      {switch_to_elx}
+        bl      {enable_fp}
+        bl      {init_mmu} // return va_offset x0
+
+        add     sp, sp, x0
+
+        mov     x0, x19                 // call_secondary_main(cpu_id)
+        ldr     x8, =__pie_boot_secondary
+        blr     x8
+        b      .",
+        switch_to_elx = sym el::switch_to_elx,
+        init_mmu = sym init_mmu,
+        enable_fp = sym enable_fp,
+    )
+}
+
+#[start_code]
+fn enable_fp() {
+    CPACR_EL1.write(CPACR_EL1::FPEN::TrapNothing);
+    barrier::isb(barrier::SY);
+}
+
+#[start_code]
+fn init_mmu() -> usize {
+    dcache_all(CacheOp::CleanAndInvalidate);
+    setup_table_regs();
+    let addr = unsafe { BOOT_PT };
+    set_table(addr);
+    setup_sctlr();
+    boot_info().kcode_offset()
 }

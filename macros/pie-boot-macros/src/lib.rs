@@ -15,6 +15,7 @@ pub fn start_code(args: TokenStream, input: TokenStream) -> TokenStream {
     let name = f.sig.ident;
     let args = f.sig.inputs;
     let stmts = f.block.stmts;
+    let ret = f.sig.output;
 
     let naked_prefix;
     let naked_attr;
@@ -34,7 +35,7 @@ pub fn start_code(args: TokenStream, input: TokenStream) -> TokenStream {
         #naked_attr
         #[unsafe(link_section = ".idmap.text")]
         #(#attrs)*
-        #vis #naked_prefix fn #name(#args) {
+        #vis #naked_prefix fn #name(#args) #ret {
             #(#stmts)*
         }
     )
@@ -96,4 +97,25 @@ impl Parse for StartCodeArgs {
 #[proc_macro_attribute]
 pub fn entry(args: TokenStream, input: TokenStream) -> TokenStream {
     entry::entry(args, input, "__pie_boot_main")
+}
+
+/// Attribute to declare the secondary entry point of the program
+///
+/// # Examples
+///
+/// - Simple entry point
+///
+/// ``` no_run
+/// # #![no_main]
+/// # use pie_boot::secondary_entry;
+/// #[entry]
+/// fn secondary(cpu_id: usize) -> ! {
+///     loop {
+///         /* .. */
+///     }
+/// }
+/// ```
+#[proc_macro_attribute]
+pub fn secondary_entry(args: TokenStream, input: TokenStream) -> TokenStream {
+    entry::entry(args, input, "__pie_boot_secondary")
 }

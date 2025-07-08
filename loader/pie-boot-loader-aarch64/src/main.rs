@@ -14,6 +14,7 @@ mod console;
 mod context;
 #[cfg(feature = "console")]
 mod debug;
+mod reg;
 #[cfg(el = "1")]
 mod el1;
 #[cfg(el = "2")]

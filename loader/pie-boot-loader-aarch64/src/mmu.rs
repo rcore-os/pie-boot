@@ -1,6 +1,7 @@
 use crate::{
     paging::{GB, MB, MapConfig, PageTableRef, PhysAddr, TableGeneric},
     ram::Ram,
+    reg::*,
     *,
 };
 use kdef_pgtable::KLINER_OFFSET;
@@ -11,7 +12,7 @@ pub fn enable_mmu(args: &EarlyBootArgs, fdt: usize) {
     setup_table_regs();
 
     let addr = new_boot_table(args, fdt);
-    set_table(addr);
+    set_table(addr.raw());
     setup_sctlr();
 }
 
