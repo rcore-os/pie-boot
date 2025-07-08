@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.17](https://github.com/rcore-os/pie-boot/compare/pie-boot-v0.2.16...pie-boot-v0.2.17) - 2025-07-08
+
+### Added
+
+- add AArch64 support with new register handling and memory setup functions
+
 ## [0.2.16](https://github.com/rcore-os/pie-boot/compare/pie-boot-v0.2.15...pie-boot-v0.2.16) - 2025-07-07
 
 ### Other
