@@ -23,7 +23,7 @@ pie-boot-macros = {workspace = true}
 aarch64-cpu = "10.0"
 aarch64-cpu-ext = "0.1"
 kasm-aarch64 = {workspace = true}
-pie-boot-loader-aarch64 = {path = "../loader/pie-boot-loader-aarch64", version = "0.1.24" }
+pie-boot-loader-aarch64 = {path = "../loader/pie-boot-loader-aarch64", version = "0.1.25" }
 
 [build-dependencies]
 bindeps-simple = {version = "0.2"}
