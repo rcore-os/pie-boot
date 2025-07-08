@@ -801,7 +801,7 @@ dependencies = [
 
 [[package]]
 name = "kdef-pgtable"
-version = "0.1.3"
+version = "0.1.4"
 dependencies = [
  "bitflags",
  "prettyplease",
@@ -1012,7 +1012,7 @@ checksum = "e3148f5046208a5d56bcfc03053e3ca6334e51da8dfb19b6cdc8b306fae3283e"
 
 [[package]]
 name = "pie-boot"
-version = "0.2.18"
+version = "0.2.19"
 dependencies = [
  "aarch64-cpu",
  "aarch64-cpu-ext",
