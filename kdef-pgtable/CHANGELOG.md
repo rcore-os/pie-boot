@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.4](https://github.com/rcore-os/pie-boot/compare/kdef-pgtable-v0.1.3...kdef-pgtable-v0.1.4) - 2025-07-08
+
+### Added
+
+- 更新 KIMAGE_VSIZE 常量并在 Cargo.toml 中添加 kdef-pgtable/space-low 特性
+
+### Other
+
+- Merge branch 'master' of github.com:rcore-os/pie-boot
+
 ## [0.1.3](https://github.com/rcore-os/pie-boot/compare/kdef-pgtable-v0.1.2...kdef-pgtable-v0.1.3) - 2025-07-08
 
 ### Added
