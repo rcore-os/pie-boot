@@ -41,7 +41,7 @@ jobs:
       - name: Build
         run: cargo build -p pie-boot --target aarch64-unknown-none
       - name: Run tests
-        run: cargo test --target aarch64-unknown-none-softfloat -p test-some-rt --test test -- --show-output
+        run: cargo test --target aarch64-unknown-none-softfloat -p test-some-rt --test test --features qemu -- --show-output
       - name: Run release-plz
         uses: release-plz/action@v0.5
         with:

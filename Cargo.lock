@@ -1132,6 +1132,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "qemu-exit"
+version = "3.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8bb0fd6580eeed0103c054e3fba2c2618ff476943762f28a645b63b8692b21c9"
+
+[[package]]
 name = "quote"
 version = "1.0.40"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1563,6 +1569,7 @@ dependencies = [
  "any-uart",
  "log",
  "pie-boot",
+ "qemu-exit",
 ]
 
 [[package]]
