@@ -1012,7 +1012,7 @@ checksum = "e3148f5046208a5d56bcfc03053e3ca6334e51da8dfb19b6cdc8b306fae3283e"
 
 [[package]]
 name = "pie-boot"
-version = "0.2.16"
+version = "0.2.17"
 dependencies = [
  "aarch64-cpu",
  "aarch64-cpu-ext",
@@ -1035,7 +1035,7 @@ dependencies = [
 
 [[package]]
 name = "pie-boot-loader-aarch64"
-version = "0.1.22"
+version = "0.1.23"
 dependencies = [
  "aarch64-cpu",
  "aarch64-cpu-ext",
@@ -1068,7 +1068,7 @@ dependencies = [
 
 [[package]]
 name = "pie-boot-macros"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "darling",
  "proc-macro2",

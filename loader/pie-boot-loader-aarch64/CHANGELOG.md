@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.23](https://github.com/rcore-os/pie-boot/compare/pie-boot-loader-aarch64-v0.1.22...pie-boot-loader-aarch64-v0.1.23) - 2025-07-08
+
+### Added
+
+- add AArch64 support with new register handling and memory setup functions
+
 ## [0.1.22](https://github.com/rcore-os/pie-boot/compare/pie-boot-loader-aarch64-v0.1.21...pie-boot-loader-aarch64-v0.1.22) - 2025-07-07
 
 ### Fixed
