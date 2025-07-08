@@ -14,8 +14,8 @@ pub const PAGE_SIZE: usize = 1usize << PAGE_SHIFT;
 const MODULES_VADDR: usize = _page_end(PG_VA_BITS);
 
 const MODULES_VSIZE: usize = (1usize << PG_VA_BITS) / 0x10 * 0x8;
-#[allow(unused)]
-const KIMAGE_VSIZE: usize = (1usize << PG_VA_BITS) / 0x10;
+
+pub const KIMAGE_VSIZE: usize = (1usize << PG_VA_BITS) / 0x10;
 
 pub const KIMAGE_VADDR: usize = MODULES_VADDR + MODULES_VSIZE;
 #[cfg(not(feature = "space-low"))]

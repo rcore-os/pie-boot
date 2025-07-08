@@ -10,7 +10,7 @@ mod loader;
 mod staticcell;
 
 use heapless::Vec;
-pub use kdef_pgtable::{KIMAGE_VADDR, KLINER_OFFSET};
+pub use kdef_pgtable::{KIMAGE_VADDR, KIMAGE_VSIZE, KLINER_OFFSET};
 use pie_boot_if::EarlyBootArgs;
 pub use pie_boot_if::{BootInfo, MemoryRegion, MemoryRegionKind, MemoryRegions};
 #[allow(unused)]
