@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.24](https://github.com/rcore-os/pie-boot/compare/pie-boot-loader-aarch64-v0.1.23...pie-boot-loader-aarch64-v0.1.24) - 2025-07-08
+
+### Added
+
+- 添加对 AArch64 EL2 的支持
+
 ## [0.1.23](https://github.com/rcore-os/pie-boot/compare/pie-boot-loader-aarch64-v0.1.22...pie-boot-loader-aarch64-v0.1.23) - 2025-07-08
 
 ### Added
