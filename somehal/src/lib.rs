@@ -15,7 +15,7 @@ pub use pie_boot::BootInfo;
 fn main(args: &BootInfo) -> ! {
     mem::clean_bss();
     fdt::init_debugcon(args.fdt);
-    arch::power::init_by_fdt(args.fdt).unwrap();
+    arch::power::init_by_fdt(args.fdt);
 
     unsafe extern "Rust" {
         fn __somehal_main(args: &BootInfo);

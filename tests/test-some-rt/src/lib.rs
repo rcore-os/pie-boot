@@ -1,12 +1,8 @@
 #![no_std]
 #![cfg(target_os = "none")]
 
-use core::hint::spin_loop;
-
 use log::{debug, info};
 use somehal::{BootInfo, println};
-
-use crate::debug::init_log;
 
 extern crate somehal;
 

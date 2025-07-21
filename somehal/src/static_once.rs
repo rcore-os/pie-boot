@@ -24,15 +24,21 @@ impl<T> StaticOnce<T> {
     }
 
     pub fn init(&self, value: T) {
+        self.try_init(value)
+            .expect("StaticOnce already initialized");
+    }
+
+    pub fn try_init(&self, value: T) -> Result<(), &'static str> {
         if self
             .initialized
             .swap(true, core::sync::atomic::Ordering::Release)
         {
-            panic!("StaticOnce has already been initialized");
+            return Err("StaticOnce has already been initialized");
         }
         unsafe {
             *self.value.get() = Some(value);
         }
+        Ok(())
     }
 
     pub unsafe fn get(&self) -> *mut T {

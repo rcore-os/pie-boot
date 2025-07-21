@@ -44,6 +44,12 @@ impl core::fmt::Write for TX {
     }
 }
 
+pub fn write_str(s: &str) {
+    let _lock = TX_MUTEX.lock();
+    let mut tx = TX;
+    let _ = tx.write_str(s);
+}
+
 pub fn write_fmt(args: core::fmt::Arguments) {
     let _lock = TX_MUTEX.lock();
     let mut tx = TX;

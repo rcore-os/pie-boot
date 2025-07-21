@@ -4,7 +4,7 @@ use aarch64_cpu::asm::wfi;
 use fdt_parser::Fdt;
 use smccc::{Hvc, Smc, psci};
 
-use crate::static_once::StaticOnce;
+use crate::{println, static_once::StaticOnce};
 
 static METHOD: StaticOnce<Method> = StaticOnce::new();
 
@@ -25,25 +25,18 @@ impl From<&str> for Method {
     }
 }
 
-pub fn init_by_fdt(fdt: Option<NonNull<u8>>) -> Result<(), &'static str> {
-    let fdt = fdt.ok_or("FDT not provided")?;
-
-    let fdt = Fdt::from_ptr(fdt).map_err(|_| "Invalid FDT")?;
+pub fn init_by_fdt(fdt: Option<NonNull<u8>>) -> Option<()> {
+    let fdt = fdt?;
+    let fdt = Fdt::from_ptr(fdt).ok()?;
     let node = fdt
         .find_compatible(&["arm,psci-1.0", "arm,psci-0.2", "arm,psci"])
-        .next()
-        .expect("No compatible node found for PSCI");
-    let method: Method = node
-        .find_property("method")
-        .expect("No method property found")
-        .str()
-        .into();
-
+        .next()?;
+    let method: Method = node.find_property("method")?.str().into();
     METHOD.init(method);
+    println!("Power management method : {:?}", method);
 
     crate::power::set_power_off(shutdown);
-
-    Ok(())
+    Some(())
 }
 
 fn shutdown() -> ! {
