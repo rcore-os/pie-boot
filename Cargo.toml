@@ -5,7 +5,7 @@ members = [
   "tests/test-some-rt",
   "loader/*",
   "pie-boot-if",
-  "macros/*",
+  "macros/*", "somehal",
 ]
 resolver = "3"
 
@@ -25,3 +25,5 @@ kdef-pgtable = {path = "kdef-pgtable", version = "0.1"}
 pie-boot-if = {path = "pie-boot-if", version = "0.6.0" }
 pie-boot-loader-macros = {path = "loader/pie-boot-loader-macros", version = "0.1"}
 pie-boot-macros = {path = "macros/pie-boot-macros", version = "0.1"}
+pie-boot = {path = "pie-boot", version = "0.2" }
+somehal = {path = "somehal", version = "0.1" }

@@ -4,44 +4,51 @@
 use core::hint::spin_loop;
 
 use log::{debug, info};
-use pie_boot::BootInfo;
+use somehal::{BootInfo, println};
 
 use crate::debug::init_log;
 
-extern crate pie_boot;
+extern crate somehal;
 
 mod debug;
 pub mod lang_items;
 
-#[pie_boot::entry]
-fn main(args: &BootInfo) -> ! {
-    clean_bss();
+#[unsafe(no_mangle)]
+fn __somehal_main(args: &BootInfo) {
+    println!("Test begin");
 
-    init_log(args.fdt.unwrap().as_ptr());
-
-    debug!("boot args: {:?}", args);
-
-    info!("All tests passed!");
-
-    #[cfg(feature = "qemu")]
-    exit();
-
-    loop {
-        spin_loop();
-    }
+    println!("All tests passed!");
 }
 
-fn clean_bss() {
-    unsafe extern "C" {
-        fn _sbss();
-        fn _ebss();
-    }
-    unsafe {
-        let bss =
-            core::slice::from_raw_parts_mut(_sbss as *mut u8, _ebss as usize - _sbss as usize);
-        bss.fill(0);
-    }
-}
+// #[pie_boot::entry]
+// fn main(args: &BootInfo) -> ! {
+//     clean_bss();
+
+//     init_log(args.fdt.unwrap().as_ptr());
+
+//     debug!("boot args: {:?}", args);
+
+//     info!("All tests passed!");
+
+//     #[cfg(feature = "qemu")]
+//     exit();
+
+//     loop {
+//         spin_loop();
+//     }
+// }
+
+// fn clean_bss() {
+//     unsafe extern "C" {
+//         fn _sbss();
+//         fn _ebss();
+//     }
+//     unsafe {
+//         let bss =
+//             core::slice::from_raw_parts_mut(_sbss as *mut u8, _ebss as usize - _sbss as usize);
+//         bss.fill(0);
+//     }
+// }
 
 #[cfg(feature = "qemu")]
 fn exit() {

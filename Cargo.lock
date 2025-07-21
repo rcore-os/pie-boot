@@ -1450,6 +1450,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "67b1b7a3b5fe4f1376887184045fcf45c69e92af734b7aaddc05fb777b6fbd03"
 
 [[package]]
+name = "smccc"
+version = "0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7c73e0ca8c566478040487791c9f488f86c5aec846ca1ab18484be8a1d8c55cd"
+dependencies = [
+ "thiserror 2.0.12",
+]
+
+[[package]]
 name = "socket2"
 version = "0.5.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1457,6 +1466,19 @@ checksum = "e22376abed350d73dd1cd119b57ffccad95b4e585a7cda43e286245ce23c0678"
 dependencies = [
  "libc",
  "windows-sys 0.52.0",
+]
+
+[[package]]
+name = "somehal"
+version = "0.1.0"
+dependencies = [
+ "aarch64-cpu",
+ "any-uart",
+ "fdt-parser",
+ "log",
+ "pie-boot",
+ "smccc",
+ "spin",
 ]
 
 [[package]]
@@ -1568,8 +1590,8 @@ version = "0.1.0"
 dependencies = [
  "any-uart",
  "log",
- "pie-boot",
  "qemu-exit",
+ "somehal",
 ]
 
 [[package]]
